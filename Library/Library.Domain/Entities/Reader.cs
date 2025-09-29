@@ -5,25 +5,28 @@
 /// </summary>
 public class Reader
 {
-    public int Id { get; set; }
+    /// <summary>
+    /// уникальный идентификатор
+    /// </summary>
+    public required int Id { get; set; }
 
     /// <summary>
     /// ФИО читателя
     /// </summary>
-    public string FullName { get; set; } = string.Empty;
+    public required string FullName { get; set; }
 
     /// <summary>
     /// адрес
     /// </summary>
-    public string Address { get; set; } = string.Empty;
+    public required string Address { get; set; }
 
     /// <summary>
     /// телефон
     /// </summary>
-    public string Phone { get; set; } = string.Empty;
+    public required string Phone { get; set; }
 
     /// <summary>
     /// дата регистрации
     /// </summary>
-    public DateTime RegistrationDate { get; set; }
+    public required DateTime RegistrationDate { get; set; }
 }

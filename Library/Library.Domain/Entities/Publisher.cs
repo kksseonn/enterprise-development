@@ -5,10 +5,13 @@
 /// </summary>
 public class Publisher
 {
-    public int Id { get; set; }
+    /// <summary>
+    /// уникальный идентификатор
+    /// </summary>
+    public required int Id { get; set; }
 
     /// <summary>
     /// название издательства
     /// </summary>
-    public string Name { get; set; } = string.Empty;
+    public required string Name { get; set; }
 }

@@ -5,10 +5,13 @@
 /// </summary>
 public class EditionType
 {
-    public int Id { get; set; }
+    /// <summary>
+    /// уникальный идентификатор
+    /// </summary>
+    public required int Id { get; set; }
 
     /// <summary>
     /// название издательства
     /// </summary>
-    public string Type { get; set; } = string.Empty;
+    public required string Type { get; set; }
 }

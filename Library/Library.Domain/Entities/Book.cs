@@ -5,40 +5,43 @@
 /// </summary>
 public class Book
 {
-    public int Id { get; set; }
+    /// <summary>
+    /// уникальный идентификатор книги
+    /// </summary>
+    public required int Id { get; set; }
 
     /// <summary>
     /// инвентарный номер
     /// </summary>
-    public int InventoryNumber { get; set; }
+    public required int InventoryNumber { get; set; }
 
     /// <summary>
     /// шифр в алфавитном каталоге
     /// </summary>
-    public string CatalogCode { get; set; } = string.Empty;
+    public required string CatalogCode { get; set; }
 
     /// <summary>
     /// название книги
     /// </summary>
-    public string Title { get; set; } = string.Empty;
+    public required string Title { get; set; }
 
     /// <summary>
     /// авторы
     /// </summary>
-    public List<string> Authors { get; set; } = new();
+    public List<string> Authors { get; set; } = [];
 
     /// <summary>
     /// вид издания
     /// </summary>
-    public EditionType EditionType { get; set; } = new();
+    public required EditionType EditionType { get; set; }
 
     /// <summary>
     /// издательство
     /// </summary>
-    public Publisher Publisher { get; set; } = new();
+    public required Publisher Publisher { get; set; }
 
     /// <summary>
     /// год издания
     /// </summary>
-    public int Year { get; set; }
+    public required int Year { get; set; }
 }
