@@ -8,12 +8,22 @@ public class Reader
     /// <summary>
     /// уникальный идентификатор
     /// </summary>
-    public required int Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
-    /// ФИО читателя
+    /// Фамилия читателя
     /// </summary>
-    public required string FullName { get; set; }
+    public required string Surname { get; set; }
+
+    /// <summary>
+    /// Имя читателя
+    /// </summary>
+    public required string Name { get; set; }
+
+    /// <summary>
+    /// Отчество читателя
+    /// </summary>
+    public string? Patronymic { get; set; }
 
     /// <summary>
     /// адрес
@@ -28,5 +38,5 @@ public class Reader
     /// <summary>
     /// дата регистрации
     /// </summary>
-    public required DateTime RegistrationDate { get; set; }
+    public required DateOnly RegistrationDate { get; set; }
 }

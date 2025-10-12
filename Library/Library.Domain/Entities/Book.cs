@@ -8,7 +8,7 @@ public class Book
     /// <summary>
     /// уникальный идентификатор книги
     /// </summary>
-    public required int Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
     /// инвентарный номер

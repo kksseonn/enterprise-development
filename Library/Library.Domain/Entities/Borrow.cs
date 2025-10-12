@@ -8,7 +8,7 @@ public class Borrow
     /// <summary>
     /// уникальный идентификатор
     /// </summary>
-    public required int Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
     /// книга, которую выдали
@@ -23,10 +23,15 @@ public class Borrow
     /// <summary>
     /// дата выдачи
     /// </summary>
-    public required DateTime BorrowDate { get; set; }
+    public required DateOnly BorrowDate { get; set; }
 
     /// <summary>
     /// кол-во дней, на которое выдана книга
     /// </summary>
     public required int Days { get; set; }
-}
+
+    /// <summary>
+    /// дата сдачи
+    /// </summary>
+    public DateOnly DueDate => BorrowDate.AddDays(Days); 
+    }

@@ -8,7 +8,7 @@ public class EditionType
     /// <summary>
     /// уникальный идентификатор
     /// </summary>
-    public required int Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
     /// название издательства
