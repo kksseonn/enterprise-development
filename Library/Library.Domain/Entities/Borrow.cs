@@ -33,5 +33,11 @@ public class Borrow
     /// <summary>
     /// дата сдачи
     /// </summary>
-    public DateOnly DueDate => BorrowDate.AddDays(Days); 
-    }
+    public DateOnly DueDate => BorrowDate.AddDays(Days);
+
+    /// <summary>
+    /// фактическая дата возврата книги (null, если ещё не сдана)
+    /// </summary>
+    public DateOnly? ReturnDate { get; set; }
+}
+//а как быть, почему...пупупу
