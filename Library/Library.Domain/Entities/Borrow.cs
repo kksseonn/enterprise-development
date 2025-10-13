@@ -31,7 +31,7 @@ public class Borrow
     public required int Days { get; set; }
 
     /// <summary>
-    /// дата сдачи
+    /// плановая дата возврата
     /// </summary>
     public DateOnly DueDate => BorrowDate.AddDays(Days);
 
@@ -40,4 +40,3 @@ public class Borrow
     /// </summary>
     public DateOnly? ReturnDate { get; set; }
 }
-//а как быть, почему...пупупу
