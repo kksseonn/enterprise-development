@@ -106,10 +106,10 @@ public static class LibraryData
         new Borrow { Id = Guid.Parse("e0000000-0000-0000-0000-000000000008"), Book = books[7], Reader = readers[2], BorrowDate = new DateOnly(2025, 10, 1), Days = 15 },
         new Borrow { Id = Guid.Parse("e0000000-0000-0000-0000-000000000009"), Book = books[8], Reader = readers[3], BorrowDate = new DateOnly(2025, 10, 3), Days = 14 },
         new Borrow { Id = Guid.Parse("e0000000-0000-0000-0000-000000000010"), Book = books[9], Reader = readers[4], BorrowDate = new DateOnly(2025, 10, 5), Days = 21 },
-        new Borrow { Id = Guid.Parse("e0000000-0000-0000-0000-000000000011"), Book = books[0], Reader = readers[1], BorrowDate = new DateOnly(2025, 9, 28), Days = 21 },
+        new Borrow { Id = Guid.Parse("e0000000-0000-0000-0000-000000000011"), Book = books[0], Reader = readers[1], BorrowDate = new DateOnly(2025, 9, 28), Days = 30 },
         new Borrow { Id = Guid.Parse("e0000000-0000-0000-0000-000000000012"), Book = books[2], Reader = readers[3], BorrowDate = new DateOnly(2025, 10, 7), Days = 10 },
         new Borrow { Id = Guid.Parse("e0000000-0000-0000-0000-000000000013"), Book = books[4], Reader = readers[9], BorrowDate = new DateOnly(2025, 10, 8), Days = 14 },
-        new Borrow { Id = Guid.Parse("e0000000-0000-0000-0000-000000000014"), Book = books[1], Reader = readers[7], BorrowDate = new DateOnly(2025, 10, 9), Days = 12 },
+        new Borrow { Id = Guid.Parse("e0000000-0000-0000-0000-000000000014"), Book = books[1], Reader = readers[7], BorrowDate = new DateOnly(2025, 10, 9), Days = 30 },
     };
 
 }

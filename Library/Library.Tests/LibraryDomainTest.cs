@@ -56,4 +56,32 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
 
         Assert.Equal(expectedIds, topReaders);
     }
+
+    [Fact]
+    public void GetReaders_ByLongestTotalBorrowDays_SortedByFullName()
+    {
+        List<Guid> expectedIds = new()
+        {
+            Guid.Parse("c0000000-0000-0000-0000-000000000001"),
+            Guid.Parse("c0000000-0000-0000-0000-000000000002"),
+            Guid.Parse("c0000000-0000-0000-0000-000000000008")
+        };
+
+        var readerMaxDays = _fixture.Borrows
+            .GroupBy(b => b.Reader)
+            .Select(g => new { Reader = g.Key, MaxDays = g.Max(b => b.Days) })
+            .ToList();
+
+        var globalMax = readerMaxDays.Max(x => x.MaxDays);
+
+        var readersByLongest = readerMaxDays
+            .Where(x => x.MaxDays == globalMax)
+            .OrderBy(x => x.Reader.Surname)
+            .ThenBy(x => x.Reader.Name)
+            .ThenBy(x => x.Reader.Patronymic)
+            .Select(x => x.Reader.Id)
+            .ToList();
+
+        Assert.Equal(expectedIds, readersByLongest);
+    }
 }
