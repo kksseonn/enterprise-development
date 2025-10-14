@@ -3,7 +3,7 @@
 namespace Library.Domain.Data;
 
 /// <summary>
-/// датасет для библиотеки
+/// набор исходных данных для доменной модели библиотеки
 /// </summary>
 public static class LibraryData
 {
@@ -111,5 +111,4 @@ public static class LibraryData
         new Borrow { Id = Guid.Parse("e0000000-0000-0000-0000-000000000013"), Book = books[4], Reader = readers[9], BorrowDate = new DateOnly(2025, 10, 8), Days = 14 },
         new Borrow { Id = Guid.Parse("e0000000-0000-0000-0000-000000000014"), Book = books[1], Reader = readers[7], BorrowDate = new DateOnly(2025, 10, 9), Days = 30 },
     };
-
 }

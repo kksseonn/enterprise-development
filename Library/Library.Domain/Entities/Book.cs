@@ -1,7 +1,7 @@
 ﻿namespace Library.Domain.Entities;
 
 /// <summary>
-/// книга
+/// книга в библиотечном каталоге
 /// </summary>
 public class Book
 {

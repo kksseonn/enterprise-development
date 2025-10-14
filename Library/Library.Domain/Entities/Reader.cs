@@ -11,22 +11,22 @@ public class Reader
     public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
-    /// Фамилия читателя
+    /// фамилия читателя
     /// </summary>
     public required string Surname { get; set; }
 
     /// <summary>
-    /// Имя читателя
+    /// имя читателя
     /// </summary>
     public required string Name { get; set; }
 
     /// <summary>
-    /// Отчество читателя
+    /// отчество читателя
     /// </summary>
     public string? Patronymic { get; set; }
 
     /// <summary>
-    /// адрес
+    /// адрес проживания читателя
     /// </summary>
     public required string Address { get; set; }
 

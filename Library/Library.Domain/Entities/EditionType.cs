@@ -1,7 +1,7 @@
 ﻿namespace Library.Domain.Entities;
 
 /// <summary>
-/// вид издания
+/// тип издания
 /// </summary>
 public class EditionType
 {
@@ -11,7 +11,7 @@ public class EditionType
     public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
-    /// название издательства
+    /// название типа издания
     /// </summary>
     public required string Type { get; set; }
 }

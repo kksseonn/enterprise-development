@@ -9,7 +9,7 @@ namespace Library.Tests.Fixtures;
 public class DataFixture
 {
     /// <summary>
-    /// справочник видов изданий
+    /// справочник типов изданий
     /// </summary>
     public EditionType[] EditionTypes { get; }
 

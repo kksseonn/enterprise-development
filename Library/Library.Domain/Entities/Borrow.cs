@@ -1,7 +1,7 @@
 ﻿namespace Library.Domain.Entities;
 
 /// <summary>
-/// выдача книги читателю
+/// запись о выдаче книги читателю
 /// </summary>
 public class Borrow
 {
