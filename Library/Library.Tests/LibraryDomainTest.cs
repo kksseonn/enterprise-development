@@ -28,11 +28,10 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
             Guid.Parse("d0000000-0000-0000-0000-000000000003"),
         };
 
-        var resultIds =
-            (from borrow in _fixture.Borrows
-             where borrow.ReturnDate is null
-             orderby borrow.Book!.Title
-             select borrow.Book.Id)
+        var resultIds = _fixture.Borrows
+            .Where(b => b.ReturnDate is null)
+            .OrderBy(b => b.Book!.Title)
+            .Select(b => b.Book.Id)
             .ToList();
 
         Assert.Equal(expectedIds, resultIds);
@@ -56,12 +55,12 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
             Guid.Parse("c0000000-0000-0000-0000-000000000010")
         };
 
-        var topReaders =
-            (from borrow in _fixture.Borrows
-             where borrow.BorrowDate >= startDate && borrow.BorrowDate <= endDate
-             group borrow by borrow.Reader!.Id into readerGroup
-             orderby readerGroup.Count() descending, readerGroup.Key
-             select readerGroup.Key)
+        var topReaders = _fixture.Borrows
+            .Where(borrow => borrow.BorrowDate >= startDate && borrow.BorrowDate <= endDate)
+            .GroupBy(borrow => borrow.Reader!.Id)
+            .OrderByDescending(group => group.Count())
+            .ThenBy(group => group.Key)
+            .Select(group => group.Key)
             .Take(5)
             .ToList();
 
@@ -81,23 +80,23 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
             Guid.Parse("c0000000-0000-0000-0000-000000000008")
         };
 
-        var readerMaxDays =
-            (from borrow in _fixture.Borrows
-             group borrow by borrow.Reader into readerGroup
-             select new
-             {
-                 Reader = readerGroup.Key!,
-                 MaxDays = readerGroup.Max(b => b.Days)
-             })
+        var readerMaxDays = _fixture.Borrows
+            .GroupBy(borrow => borrow.Reader)
+            .Select(g => new
+            {
+                Reader = g.Key!,
+                MaxDays = g.Max(b => b.Days)
+            })
             .ToList();
 
         var globalMax = readerMaxDays.Max(x => x.MaxDays);
 
-        var readersByLongest =
-            (from r in readerMaxDays
-             where r.MaxDays == globalMax
-             orderby r.Reader.Surname, r.Reader.Name, r.Reader.Patronymic
-             select r.Reader.Id)
+        var readersByLongest = readerMaxDays
+            .Where(x => x.MaxDays == globalMax)
+            .OrderBy(x => x.Reader.Surname)
+            .ThenBy(x => x.Reader.Name)
+            .ThenBy(x => x.Reader.Patronymic)
+            .Select(x => x.Reader.Id)
             .ToList();
 
         Assert.Equal(expectedIds, readersByLongest);
@@ -109,8 +108,8 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
     [Fact]
     public void GetTop5Publishers_InLastYear_ReturnsExpectedList()
     {
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var oneYearAgo = today.AddYears(-1);
+        var today = new DateOnly(2025, 10, 31);
+        var oneYearAgo = new DateOnly(2024, 10, 31);
 
         var expectedIds = new List<Guid>
         {
@@ -121,12 +120,12 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
             Guid.Parse("b0000000-0000-0000-0000-000000000006")
         };
 
-        var topPublishers =
-            (from borrow in _fixture.Borrows
-             where borrow.BorrowDate >= oneYearAgo && borrow.BorrowDate <= today
-             group borrow by borrow.Book!.Publisher!.Id into publisherGroup
-             orderby publisherGroup.Count() descending, publisherGroup.Key
-             select publisherGroup.Key)
+        var topPublishers = _fixture.Borrows
+            .Where(b => b.BorrowDate >= oneYearAgo && b.BorrowDate <= today)
+            .GroupBy(b => b.Book!.Publisher!.Id)
+            .OrderByDescending(g => g.Count())
+            .ThenBy(g => g.Key)
+            .Select(g => g.Key)
             .Take(5)
             .ToList();
 
@@ -139,27 +138,28 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
     [Fact]
     public void GetBottom5Books_InLastYear_ReturnsExpectedBooks()
     {
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var oneYearAgo = today.AddYears(-1);
+        var today = new DateOnly(2025, 10, 14);
+        var oneYearAgo = new DateOnly(2024, 10, 14);
 
         var expectedIds = new List<Guid>
         {
-            Guid.Parse("d0000000-0000-0000-0000-000000000007"),
-            Guid.Parse("d0000000-0000-0000-0000-000000000008"),
-            Guid.Parse("d0000000-0000-0000-0000-000000000001"),
-            Guid.Parse("d0000000-0000-0000-0000-000000000002"),
-            Guid.Parse("d0000000-0000-0000-0000-000000000015")
+            Guid.Parse("d0000000-0000-0000-0000-000000000019"),
+            Guid.Parse("d0000000-0000-0000-0000-000000000020"),
+            Guid.Parse("d0000000-0000-0000-0000-000000000016"),
+            Guid.Parse("d0000000-0000-0000-0000-000000000004"),
+            Guid.Parse("d0000000-0000-0000-0000-000000000017")
         };
 
-        var bottomBooks =
-            (from borrow in _fixture.Borrows
-             where borrow.BorrowDate >= oneYearAgo && borrow.BorrowDate <= today
-             group borrow by borrow.Book!.Id into bookGroup
-             orderby bookGroup.Count(),
-                     (from b in _fixture.Books
-                      where b.Id == bookGroup.Key
-                      select b.Title).FirstOrDefault()
-             select bookGroup.Key)
+        var bottomBooks = _fixture.Books
+            .GroupJoin(
+                _fixture.Borrows.Where(b => b.BorrowDate >= oneYearAgo && b.BorrowDate <= today),
+                book => book.Id,
+                borrow => borrow.Book!.Id,
+                (book, borrowGroup) => new { Book = book, BorrowCount = borrowGroup.Count() }
+            )
+            .OrderBy(x => x.BorrowCount)
+            .ThenBy(x => x.Book.Title)
+            .Select(x => x.Book.Id)
             .Take(5)
             .ToList();
 
