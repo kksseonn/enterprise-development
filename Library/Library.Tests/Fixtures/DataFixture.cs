@@ -4,37 +4,37 @@ using Library.Domain.Data;
 namespace Library.Tests.Fixtures;
 
 /// <summary>
-/// набор данных для тестов
+/// Набор данных для тестов
 /// </summary>
 public class DataFixture
 {
     /// <summary>
-    /// справочник типов изданий
+    /// Справочник типов изданий
     /// </summary>
-    public EditionType[] EditionTypes { get; }
+    public List<EditionType> EditionTypes { get; }
 
     /// <summary>
-    /// справочник издательств
+    /// Справочник издательств
     /// </summary>
-    public Publisher[] Publishers { get; }
+    public List<Publisher> Publishers { get; }
 
     /// <summary>
-    /// список читателей
+    /// Список читателей
     /// </summary>
-    public Reader[] Readers { get; }
+    public List<Reader> Readers { get; }
 
     /// <summary>
-    /// каталог книг
+    /// Каталог книг
     /// </summary>
-    public Book[] Books { get; }
+    public List<Book> Books { get; }
 
     /// <summary>
-    /// журнал выдач книг
+    /// Журнал выдач книг
     /// </summary>
-    public Borrow[] Borrows { get; }
+    public List<Borrow> Borrows { get; }
 
     /// <summary>
-    /// инициализация тестовых данных
+    /// Инициализация тестовых данных
     /// </summary>
     public DataFixture()
     {

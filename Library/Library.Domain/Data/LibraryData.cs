@@ -3,14 +3,14 @@
 namespace Library.Domain.Data;
 
 /// <summary>
-/// набор исходных данных для доменной модели библиотеки
+/// Набор исходных данных для доменной модели библиотеки
 /// </summary>
 public static class LibraryData
 {
     /// <summary>
-    /// виды изданий
+    /// Виды изданий
     /// </summary>
-    public static EditionType[] EditionTypes() => new[]
+    public static List<EditionType> EditionTypes() => new()
     {
         new EditionType { Id = Guid.Parse("a0000000-0000-0000-0000-000000000001"), Type = "Учебник" },
         new EditionType { Id = Guid.Parse("a0000000-0000-0000-0000-000000000002"), Type = "Монография" },
@@ -25,9 +25,9 @@ public static class LibraryData
     };
 
     /// <summary>
-    /// издательства
+    /// Издательства
     /// </summary>
-    public static Publisher[] Publishers() => new[]
+    public static List<Publisher> Publishers() => new()
     {
         new Publisher { Id = Guid.Parse("b0000000-0000-0000-0000-000000000001"), Name = "Эксмо" },
         new Publisher { Id = Guid.Parse("b0000000-0000-0000-0000-000000000002"), Name = "АСТ" },
@@ -42,9 +42,9 @@ public static class LibraryData
     };
 
     /// <summary>
-    /// читатели
+    /// Читатели
     /// </summary>
-    public static Reader[] Readers() => new[]
+    public static List<Reader> Readers() => new()
     {
         new Reader { Id = Guid.Parse("c0000000-0000-0000-0000-000000000001"), Surname = "Иванов", Name = "Иван", Patronymic = "Иванович",  Address = "ул. Ленина, 1", Phone = "+79001234567", RegistrationDate = new DateOnly(2023, 12, 3) },
         new Reader { Id = Guid.Parse("c0000000-0000-0000-0000-000000000002"), Surname = "Петров", Name = "Петр", Patronymic = "Петрович", Address = "ул. Гагарина, 2", Phone = "+79012345678", RegistrationDate = new DateOnly(2024, 6, 22) },
@@ -59,9 +59,9 @@ public static class LibraryData
     };
 
     /// <summary>
-    /// книги
+    /// Книги
     /// </summary>
-    public static Book[] Books(EditionType[] editionTypes, Publisher[] publishers) => new[]
+    public static List<Book> Books(List<EditionType> editionTypes, List<Publisher> publishers) => new()
     {
         new Book { Id = Guid.Parse("d0000000-0000-0000-0000-000000000001"), InventoryNumber = 1001, CatalogCode = "A-01", Title = "Война и мир", Authors = ["Л.Н. Толстой"], EditionType = editionTypes[3], Publisher = publishers[0], Year = 1869 },
         new Book { Id = Guid.Parse("d0000000-0000-0000-0000-000000000002"), InventoryNumber = 1002, CatalogCode = "A-01", Title = "Война и мир", Authors = ["Л.Н. Толстой"], EditionType = editionTypes[3], Publisher = publishers[0], Year = 1869 },
@@ -86,9 +86,9 @@ public static class LibraryData
     };
 
     /// <summary>
-    /// выданные книги
+    /// Выданные книги
     /// </summary>
-    public static Borrow[] Borrows(Book[] books, Reader[] readers) => new[]
+    public static List<Borrow> Borrows(List<Book> books, List<Reader> readers) => new()
     {
         new Borrow { Id = Guid.Parse("e0000000-0000-0000-0000-000000000001"), Book = books[0], Reader = readers[0], BorrowDate = new DateOnly(2024, 1, 10), Days = 14, ReturnDate = new DateOnly(2024, 1, 24) },
         new Borrow { Id = Guid.Parse("e0000000-0000-0000-0000-000000000002"), Book = books[1], Reader = readers[1], BorrowDate = new DateOnly(2024, 7, 1), Days = 10, ReturnDate = new DateOnly(2024, 7, 11) },

@@ -1,42 +1,42 @@
 ﻿namespace Library.Domain.Entities;
 
 /// <summary>
-/// читатель
+/// Читатель
 /// </summary>
 public class Reader
 {
     /// <summary>
-    /// уникальный идентификатор
+    /// Уникальный идентификатор
     /// </summary>
     public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
-    /// фамилия читателя
+    /// Фамилия читателя
     /// </summary>
     public required string Surname { get; set; }
 
     /// <summary>
-    /// имя читателя
+    /// Имя читателя
     /// </summary>
     public required string Name { get; set; }
 
     /// <summary>
-    /// отчество читателя
+    /// Отчество читателя
     /// </summary>
     public string? Patronymic { get; set; }
 
     /// <summary>
-    /// адрес проживания читателя
+    /// Адрес проживания читателя
     /// </summary>
     public required string Address { get; set; }
 
     /// <summary>
-    /// телефон
+    /// Телефон
     /// </summary>
     public required string Phone { get; set; }
 
     /// <summary>
-    /// дата регистрации
+    /// Дата регистрации
     /// </summary>
     public required DateOnly RegistrationDate { get; set; }
 }

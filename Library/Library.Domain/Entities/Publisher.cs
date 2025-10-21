@@ -1,17 +1,17 @@
 ﻿namespace Library.Domain.Entities;
 
 /// <summary>
-/// издательство
+/// Издательство
 /// </summary>
 public class Publisher
 {
     /// <summary>
-    /// уникальный идентификатор
+    /// Уникальный идентификатор
     /// </summary>
     public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
-    /// название издательства
+    /// Название издательства
     /// </summary>
     public required string Name { get; set; }
 }

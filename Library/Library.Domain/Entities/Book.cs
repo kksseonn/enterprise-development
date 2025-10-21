@@ -1,47 +1,47 @@
 ﻿namespace Library.Domain.Entities;
 
 /// <summary>
-/// книга в библиотечном каталоге
+/// Книга в библиотечном каталоге
 /// </summary>
 public class Book
 {
     /// <summary>
-    /// уникальный идентификатор книги
+    /// Уникальный идентификатор книги
     /// </summary>
     public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
-    /// инвентарный номер
+    /// Инвентарный номер
     /// </summary>
     public required int InventoryNumber { get; set; }
 
     /// <summary>
-    /// шифр в алфавитном каталоге
+    /// Шифр в алфавитном каталоге
     /// </summary>
     public required string CatalogCode { get; set; }
 
     /// <summary>
-    /// название книги
+    /// Название книги
     /// </summary>
     public required string Title { get; set; }
 
     /// <summary>
-    /// авторы
+    /// Авторы
     /// </summary>
     public List<string> Authors { get; set; } = [];
 
     /// <summary>
-    /// вид издания
+    /// Вид издания
     /// </summary>
     public required EditionType EditionType { get; set; }
 
     /// <summary>
-    /// издательство
+    /// Издательство
     /// </summary>
     public required Publisher Publisher { get; set; }
 
     /// <summary>
-    /// год издания
+    /// Год издания
     /// </summary>
     public required int Year { get; set; }
 }

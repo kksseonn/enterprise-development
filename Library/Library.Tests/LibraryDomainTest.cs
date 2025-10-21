@@ -3,14 +3,14 @@ using Library.Tests.Fixtures;
 namespace Library.Tests;
 
 /// <summary>
-/// набор тестов для проверки доменных сущностей библиотект
+/// РќР°Р±РѕСЂ С‚РµСЃС‚РѕРІ РґР»СЏ РїСЂРѕРІРµСЂРєРё РґРѕРјРµРЅРЅС‹С… СЃСѓС‰РЅРѕСЃС‚РµР№ Р±РёР±Р»РёРѕС‚РµРєРё
 /// </summary>
 public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
 {
     private readonly DataFixture _fixture = fixture;
 
     /// <summary>
-    /// проверка активных выдач книг по названию
+    /// РџСЂРѕРІРµСЂРєР° Р°РєС‚РёРІРЅС‹С… РІС‹РґР°С‡ РєРЅРёРі РїРѕ РЅР°Р·РІР°РЅРёСЋ
     /// </summary>
     [Fact]
     public void GetBorrowedBooks_OrderedByBookTitle_ReturnsExpectedOrder()
@@ -31,14 +31,13 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
         var resultIds = _fixture.Borrows
             .Where(b => b.ReturnDate is null)
             .OrderBy(b => b.Book!.Title)
-            .Select(b => b.Book.Id)
-            .ToList();
+            .Select(b => b.Book.Id);
 
         Assert.Equal(expectedIds, resultIds);
     }
 
     /// <summary>
-    /// проверка, что возвращается пять самых активных читателей за указанный период
+    /// РџСЂРѕРІРµСЂРєР°, С‡С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РїСЏС‚СЊ СЃР°РјС‹С… Р°РєС‚РёРІРЅС‹С… С‡РёС‚Р°С‚РµР»РµР№ Р·Р° СѓРєР°Р·Р°РЅРЅС‹Р№ РїРµСЂРёРѕРґ
     /// </summary>
     [Fact]
     public void GetTop5Readers_InPeriod_ReturnsCorrectReaders()
@@ -61,14 +60,13 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
             .OrderByDescending(group => group.Count())
             .ThenBy(group => group.Key)
             .Select(group => group.Key)
-            .Take(5)
-            .ToList();
+            .Take(5);
 
         Assert.Equal(expectedIds, topReaders);
     }
 
     /// <summary>
-    /// проверка выборки читетелей, бравших книги на наибольший период времени
+    /// РџСЂРѕРІРµСЂРєР° РІС‹Р±РѕСЂРєРё С‡РёС‚Р°С‚РµР»РµР№, Р±СЂР°РІС€РёС… РєРЅРёРіРё РЅР° РЅР°РёР±РѕР»СЊС€РёР№ РїРµСЂРёРѕРґ РІСЂРµРјРµРЅРё
     /// </summary>
     [Fact]
     public void GetReaders_ByLongestTotalBorrowDays_ReturnsSortedByFullName()
@@ -86,8 +84,7 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
             {
                 Reader = g.Key!,
                 MaxDays = g.Max(b => b.Days)
-            })
-            .ToList();
+            });
 
         var globalMax = readerMaxDays.Max(x => x.MaxDays);
 
@@ -96,14 +93,13 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
             .OrderBy(x => x.Reader.Surname)
             .ThenBy(x => x.Reader.Name)
             .ThenBy(x => x.Reader.Patronymic)
-            .Select(x => x.Reader.Id)
-            .ToList();
+            .Select(x => x.Reader.Id);
 
         Assert.Equal(expectedIds, readersByLongest);
     }
 
     /// <summary>
-    /// проверка, что возвращается пять наиболее популярных издательств за последний год
+    /// РџСЂРѕРІРµСЂРєР°, С‡С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РїСЏС‚СЊ РЅР°РёР±РѕР»РµРµ РїРѕРїСѓР»СЏСЂРЅС‹С… РёР·РґР°С‚РµР»СЊСЃС‚РІ Р·Р° РїРѕСЃР»РµРґРЅРёР№ РіРѕРґ
     /// </summary>
     [Fact]
     public void GetTop5Publishers_InLastYear_ReturnsExpectedList()
@@ -126,14 +122,13 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
             .OrderByDescending(g => g.Count())
             .ThenBy(g => g.Key)
             .Select(g => g.Key)
-            .Take(5)
-            .ToList();
+            .Take(5);
 
         Assert.Equal(expectedIds, topPublishers);
     }
 
     /// <summary>
-    /// проверка, что возвращается пять наименее популярных книг за последний год
+    /// РџСЂРѕРІРµСЂРєР°, С‡С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РїСЏС‚СЊ РЅР°РёРјРµРЅРµРµ РїРѕРїСѓР»СЏСЂРЅС‹С… РєРЅРёРі Р·Р° РїРѕСЃР»РµРґРЅРёР№ РіРѕРґ
     /// </summary>
     [Fact]
     public void GetBottom5Books_InLastYear_ReturnsExpectedBooks()
@@ -160,8 +155,7 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
             .OrderBy(x => x.BorrowCount)
             .ThenBy(x => x.Book.Title)
             .Select(x => x.Book.Id)
-            .Take(5)
-            .ToList();
+            .Take(5);
 
         Assert.Equal(expectedIds, bottomBooks);
     }
