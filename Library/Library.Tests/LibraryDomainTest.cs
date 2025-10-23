@@ -7,8 +7,6 @@ namespace Library.Tests;
 /// </summary>
 public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
 {
-    private readonly DataFixture _fixture = fixture;
-
     /// <summary>
     /// Проверка активных выдач книг по названию
     /// </summary>
@@ -28,7 +26,7 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
             Guid.Parse("d0000000-0000-0000-0000-000000000003"),
         };
 
-        var resultIds = _fixture.Borrows
+        var resultIds = fixture.Borrows
             .Where(b => b.ReturnDate is null)
             .OrderBy(b => b.Book!.Title)
             .Select(b => b.Book.Id);
@@ -54,7 +52,7 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
             Guid.Parse("c0000000-0000-0000-0000-000000000010")
         };
 
-        var topReaders = _fixture.Borrows
+        var topReaders = fixture.Borrows
             .Where(borrow => borrow.BorrowDate >= startDate && borrow.BorrowDate <= endDate)
             .GroupBy(borrow => borrow.Reader!.Id)
             .OrderByDescending(group => group.Count())
@@ -78,7 +76,7 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
             Guid.Parse("c0000000-0000-0000-0000-000000000008")
         };
 
-        var readerMaxDays = _fixture.Borrows
+        var readerMaxDays = fixture.Borrows
             .GroupBy(borrow => borrow.Reader)
             .Select(g => new
             {
@@ -116,7 +114,7 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
             Guid.Parse("b0000000-0000-0000-0000-000000000006")
         };
 
-        var topPublishers = _fixture.Borrows
+        var topPublishers = fixture.Borrows
             .Where(b => b.BorrowDate >= oneYearAgo && b.BorrowDate <= today)
             .GroupBy(b => b.Book!.Publisher!.Id)
             .OrderByDescending(g => g.Count())
@@ -145,9 +143,9 @@ public class LibraryDomainTest(DataFixture fixture): IClassFixture<DataFixture>
             Guid.Parse("d0000000-0000-0000-0000-000000000017")
         };
 
-        var bottomBooks = _fixture.Books
+        var bottomBooks = fixture.Books
             .GroupJoin(
-                _fixture.Borrows.Where(b => b.BorrowDate >= oneYearAgo && b.BorrowDate <= today),
+                fixture.Borrows.Where(b => b.BorrowDate >= oneYearAgo && b.BorrowDate <= today),
                 book => book.Id,
                 borrow => borrow.Book!.Id,
                 (book, borrowGroup) => new { Book = book, BorrowCount = borrowGroup.Count() }
