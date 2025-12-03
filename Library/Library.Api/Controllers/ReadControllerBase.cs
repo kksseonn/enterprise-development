@@ -1,53 +1,34 @@
 ﻿using Library.Application.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Library.Api.Controllers;
+namespace Library.Api.Host.Controllers;
 
-
-[ApiController]
 [Route("api/[controller]")]
-public abstract class ReadControllerBase<TDto, TKey> : ControllerBase
+[ApiController]
+public abstract class ReadControllerBase<TDto, TKey>(
+    IApplicationReadService<TDto, TKey> appService,
+    ILogger<ReadControllerBase<TDto, TKey>> logger)
+    : ControllerBase
     where TDto : class
     where TKey : struct
 {
-    protected readonly IApplicationReadService<TDto, TKey> _appService;
-    protected readonly ILogger<ReadControllerBase<TDto, TKey>> _logger;
-
-    protected ReadControllerBase(
-        IApplicationReadService<TDto, TKey> appService,
-        ILogger<ReadControllerBase<TDto, TKey>> logger)
-    {
-        _appService = appService;
-        _logger = logger;
-    }
-
-    /// <summary>
-    /// Retrieves all entities.
-    /// </summary>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(500)]
     public async Task<ActionResult<IList<TDto>>> GetAll()
-        => await ExecuteWithLogging(nameof(GetAll), async () =>
-        {
-            var entities = await _appService.GetAll();
-            return Ok(entities);
-        });
+        => await ExecuteWithLogging(nameof(GetAll), async () => Ok(await appService.GetAll()));
 
-    /// <summary>
-    /// Retrieves an entity by its ID.
-    /// </summary>
     [HttpGet("{id}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
     public async Task<ActionResult<TDto>> Get(TKey id)
         => await ExecuteWithLogging(nameof(Get), async () =>
         {
             try
             {
-                var entity = await _appService.Get(id);
-                return Ok(entity);
+                var result = await appService.Get(id);
+                return Ok(result);
             }
             catch (KeyNotFoundException)
             {
@@ -55,23 +36,19 @@ public abstract class ReadControllerBase<TDto, TKey> : ControllerBase
             }
         });
 
-    /// <summary>
-    /// Executes an action with consistent logging and error handling.
-    /// </summary>
     protected async Task<ActionResult> ExecuteWithLogging(string method, Func<Task<ActionResult>> action)
     {
-        _logger.LogInformation("{Method} of {Controller} was called", method, GetType().Name);
-
+        logger.LogInformation("{Method} of {Controller} was called", method, GetType().Name);
         try
         {
             var result = await action();
-            _logger.LogInformation("{Method} of {Controller} executed successfully", method, GetType().Name);
+            logger.LogInformation("{Method} of {Controller} executed successfully", method, GetType().Name);
             return result;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Exception in {Method} of {Controller}", method, GetType().Name);
-            return StatusCode(500, new { ex.Message, InnerException = ex.InnerException?.Message });
+            logger.LogError(ex, "Exception in {Method} of {Controller}", method, GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n{ex.InnerException?.Message}");
         }
     }
 }

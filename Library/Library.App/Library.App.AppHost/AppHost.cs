@@ -7,7 +7,7 @@ var libraryDb = builder
     .AddPostgres("library-db", password: password)
     .AddDatabase(dbName);
 
-builder.AddProject<Projects.Library_Api>("library-api")
+builder.AddProject<Projects.Library_Api_Host>("library-api-host")
     .WithReference(libraryDb, "Database")
     .WaitFor(libraryDb);
 

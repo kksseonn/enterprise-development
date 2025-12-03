@@ -3,7 +3,7 @@ using Library.Application.Mapper;
 using Library.Application.Service;
 using Library.Domain.Data;
 using Library.Domain.Entities;
-using Library.Domain.IRepository;
+using Library.Domain;
 using Library.Infrastructure;
 using Library.Infrastructure.Repository;
 using Library.ServiceDefaults;
@@ -23,7 +23,7 @@ builder.Services.AddScoped<IMapper, ServiceMapper>();
 
 builder.Services.AddSingleton<LibraryData>();
 
-builder.Services.AddScoped<IEditionTypeRepository, EditionTypeRepository>();
+builder.Services.AddScoped<IRepository<EditionType>, EditionTypeRepository>();
 
 builder.Services.AddScoped<IEditionTypeReadService, EditionTypeService>();
 

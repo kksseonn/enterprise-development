@@ -13,11 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Application.Contrac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Application", "Library.Application\Library.Application.csproj", "{D2612B64-0971-4703-B5DB-7424D3362EE1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Api", "Library.Api\Library.Api.csproj", "{F251F384-76E8-4417-BD5F-99ECE6485086}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Api.Host", "Library.Api\Library.Api.Host.csproj", "{F251F384-76E8-4417-BD5F-99ECE6485086}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.ServiceDefaults", "Library.ServiceDefaults\Library.ServiceDefaults.csproj", "{E6E0FA6C-B386-4643-A053-D295B4C5783B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.App", "Library.App\Library.App.AppHost\Library.App.csproj", "{3003ADA8-E570-4911-857E-50F62AE35C25}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.AppHost", "Library.App\Library.App.AppHost\Library.AppHost.csproj", "{3003ADA8-E570-4911-857E-50F62AE35C25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

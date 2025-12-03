@@ -1,7 +1,7 @@
 ﻿using Library.Application.Contracts.EditionType;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Library.Api.Controllers;
+namespace Library.Api.Host.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
