@@ -4,6 +4,9 @@ using Mapster;
 
 namespace Library.Application.Mapper;
 
+/// <summary>
+/// Регистрация конфигураций Mapster для маппинга сущностей на DTO.
+/// </summary>
 public class MappingRegister : IRegister
 {
     public void Register(TypeAdapterConfig config)

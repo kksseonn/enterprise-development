@@ -5,10 +5,11 @@ namespace Library.Api.Host.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class EditionTypeController(
-    IEditionTypeReadService service,
-    ILogger<EditionTypeController> logger
-) : ReadControllerBase<EditionTypeDto, Guid>(service, logger)
+public class EditionTypeController : ReadControllerBase<EditionTypeDto, Guid>
 {
-    
+    public EditionTypeController(IEditionTypeReadService service,
+                                 ILogger<EditionTypeController> logger)
+        : base(service, logger)
+    {
+    }
 }

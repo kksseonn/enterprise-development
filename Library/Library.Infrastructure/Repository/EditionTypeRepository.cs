@@ -6,35 +6,48 @@ namespace Library.Infrastructure.Repository;
 
 public class EditionTypeRepository(LibraryDbContext context) : IRepository<EditionType>
 {
-    public async Task<EditionType> Create(EditionType entity)
+    public async Task<EditionType> Create(EditionType entity, CancellationToken ct = default)
     {
-        var result = await context.EditionTypes.AddAsync(entity);
-        await context.SaveChangesAsync();
+        var result = await context.EditionTypes.AddAsync(entity, ct);
+        await context.SaveChangesAsync(ct);
         return result.Entity;
     }
 
-    public async Task<bool> Delete(Guid id)
+    public async Task<EditionType?> Get(Guid id, CancellationToken ct = default) =>
+    await context.EditionTypes
+        .AsNoTracking()
+        .FirstOrDefaultAsync(e => e.Id == id, ct);
+
+    public async Task<IReadOnlyList<EditionType>> GetAll(CancellationToken ct = default) =>
+        await context.EditionTypes
+            .AsNoTracking()
+            .ToListAsync(ct);
+
+
+    public async Task<EditionType?> Update(EditionType entity, CancellationToken ct = default)
+    {
+        // Проверяем наличие
+        var existing = await context.EditionTypes.FirstOrDefaultAsync(e => e.Id == entity.Id, ct);
+
+        if (existing == null)
+            return null;
+
+        // Обновляем только изменённые поля
+        context.Entry(existing).CurrentValues.SetValues(entity);
+
+        await context.SaveChangesAsync(ct);
+
+        return existing;
+    }
+
+    public async Task<bool> Delete(Guid id, CancellationToken ct = default)
     {
         var entity = await context.EditionTypes.FirstOrDefaultAsync(e => e.Id == id);
         if (entity == null)
             return false;
 
         context.EditionTypes.Remove(entity);
-        await context.SaveChangesAsync();
-
+        await context.SaveChangesAsync(ct);
         return true;
-    }
-
-    public async Task<EditionType?> Get(Guid id) =>
-        await context.EditionTypes.FirstOrDefaultAsync(e => e.Id == id);
-
-    public async Task<IList<EditionType>> GetAll() =>
-        await context.EditionTypes.ToListAsync();
-
-    public async Task<EditionType> Update(EditionType entity)
-    {
-        context.EditionTypes.Update(entity);
-        await context.SaveChangesAsync();
-        return entity;
     }
 }

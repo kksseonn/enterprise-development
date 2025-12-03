@@ -1,9 +1,9 @@
 using Library.Application.Contracts.EditionType;
 using Library.Application.Mapper;
 using Library.Application.Service;
+using Library.Domain;
 using Library.Domain.Data;
 using Library.Domain.Entities;
-using Library.Domain;
 using Library.Infrastructure;
 using Library.Infrastructure.Repository;
 using Library.ServiceDefaults;
@@ -17,14 +17,12 @@ builder.AddServiceDefaults();
 
 var config = TypeAdapterConfig.GlobalSettings;
 config.Scan(typeof(MappingRegister).Assembly);
-
 builder.Services.AddSingleton(config);
 builder.Services.AddScoped<IMapper, ServiceMapper>();
 
 builder.Services.AddSingleton<LibraryData>();
 
 builder.Services.AddScoped<IRepository<EditionType>, EditionTypeRepository>();
-
 builder.Services.AddScoped<IEditionTypeReadService, EditionTypeService>();
 
 builder.Services.AddControllers();
@@ -40,13 +38,16 @@ builder.Services.AddSwaggerGen(c =>
         var xmlFile = $"{assembly.GetName().Name}.xml";
         var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
         if (File.Exists(xmlPath))
-            c.IncludeXmlComments(xmlPath);
+            c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
     }
 });
 
-builder.AddNpgsqlDbContext<LibraryDbContext>(
-    "Database",
-    configureDbContextOptions: options => options.UseLazyLoadingProxies()
+var connectionString = builder.Configuration.GetConnectionString("Database")
+                       ?? "Host=localhost;Database=library;Username=postgres;Password=postgres";
+
+builder.Services.AddDbContext<LibraryDbContext>(options =>
+    options.UseNpgsql(connectionString)
+           .UseLazyLoadingProxies()
 );
 
 var app = builder.Build();
@@ -67,6 +68,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapDefaultEndpoints();
 
 app.Run();
