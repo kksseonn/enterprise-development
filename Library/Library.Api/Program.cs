@@ -1,3 +1,4 @@
+using Library.Application.Contracts;
 using Library.Application.Contracts.EditionType;
 using Library.Application.Mapper;
 using Library.Application.Service;
@@ -23,7 +24,9 @@ builder.Services.AddScoped<IMapper, ServiceMapper>();
 builder.Services.AddSingleton<LibraryData>();
 
 builder.Services.AddScoped<IRepository<EditionType>, EditionTypeRepository>();
-builder.Services.AddScoped<IEditionTypeReadService, EditionTypeService>();
+//builder.Services.AddScoped<IEditionTypeReadService, EditionTypeService>();
+builder.Services.AddScoped<IApplicationCrudService<EditionTypeDto, EditionTypeDto, Guid>, EditionTypeService>();
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
