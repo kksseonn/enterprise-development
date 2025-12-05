@@ -26,13 +26,11 @@ public class EditionTypeRepository(LibraryDbContext context) : IRepository<Editi
 
     public async Task<EditionType?> Update(EditionType entity, CancellationToken ct = default)
     {
-        // Проверяем наличие
         var existing = await context.EditionTypes.FirstOrDefaultAsync(e => e.Id == entity.Id, ct);
 
         if (existing == null)
             return null;
 
-        // Обновляем только изменённые поля
         context.Entry(existing).CurrentValues.SetValues(entity);
 
         await context.SaveChangesAsync(ct);

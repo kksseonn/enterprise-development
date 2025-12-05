@@ -91,6 +91,73 @@ namespace Library.Infrastructure.Migrations
                             Type = "Комикс"
                         });
                 });
+
+            modelBuilder.Entity("Library.Domain.Entities.Publisher", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("publisher", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("b0000000-0000-0000-0000-000000000001"),
+                            Name = "Эксмо"
+                        },
+                        new
+                        {
+                            Id = new Guid("b0000000-0000-0000-0000-000000000002"),
+                            Name = "АСТ"
+                        },
+                        new
+                        {
+                            Id = new Guid("b0000000-0000-0000-0000-000000000003"),
+                            Name = "Просвещение"
+                        },
+                        new
+                        {
+                            Id = new Guid("b0000000-0000-0000-0000-000000000004"),
+                            Name = "Наука"
+                        },
+                        new
+                        {
+                            Id = new Guid("b0000000-0000-0000-0000-000000000005"),
+                            Name = "Олимп-Бизнес"
+                        },
+                        new
+                        {
+                            Id = new Guid("b0000000-0000-0000-0000-000000000006"),
+                            Name = "МИФ"
+                        },
+                        new
+                        {
+                            Id = new Guid("b0000000-0000-0000-0000-000000000007"),
+                            Name = "Дрофа"
+                        },
+                        new
+                        {
+                            Id = new Guid("b0000000-0000-0000-0000-000000000008"),
+                            Name = "Азбука"
+                        },
+                        new
+                        {
+                            Id = new Guid("b0000000-0000-0000-0000-000000000009"),
+                            Name = "Росмэн"
+                        },
+                        new
+                        {
+                            Id = new Guid("b0000000-0000-0000-0000-000000000010"),
+                            Name = "Питер"
+                        });
+                });
 #pragma warning restore 612, 618
         }
     }

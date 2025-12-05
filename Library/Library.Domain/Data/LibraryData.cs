@@ -7,7 +7,9 @@ namespace Library.Domain.Data;
 /// </summary>
 public class LibraryData
 {
-
+    /// <summary>
+    /// Виды изданий
+    /// </summary>
     public static EditionType[] EditionTypes() => new[]
     {
         new EditionType { Id = Guid.Parse("a0000000-0000-0000-0000-000000000001"), Type = "Учебник" },
@@ -20,5 +22,22 @@ public class LibraryData
         new EditionType { Id = Guid.Parse("a0000000-0000-0000-0000-000000000008"), Type = "Энциклопедия" },
         new EditionType { Id = Guid.Parse("a0000000-0000-0000-0000-000000000009"), Type = "Доклад" },
         new EditionType { Id = Guid.Parse("a0000000-0000-0000-0000-000000000010"), Type = "Комикс" }
+    };
+
+    /// <summary>
+    /// Издательства
+    /// </summary>
+    public static Publisher[] Publishers() => new[]
+    {
+        new Publisher { Id = Guid.Parse("b0000000-0000-0000-0000-000000000001"), Name = "Эксмо" },
+        new Publisher { Id = Guid.Parse("b0000000-0000-0000-0000-000000000002"), Name = "АСТ" },
+        new Publisher { Id = Guid.Parse("b0000000-0000-0000-0000-000000000003"), Name = "Просвещение" },
+        new Publisher { Id = Guid.Parse("b0000000-0000-0000-0000-000000000004"), Name = "Наука" },
+        new Publisher { Id = Guid.Parse("b0000000-0000-0000-0000-000000000005"), Name = "Олимп-Бизнес" },
+        new Publisher { Id = Guid.Parse("b0000000-0000-0000-0000-000000000006"), Name = "МИФ" },
+        new Publisher { Id = Guid.Parse("b0000000-0000-0000-0000-000000000007"), Name = "Дрофа" },
+        new Publisher { Id = Guid.Parse("b0000000-0000-0000-0000-000000000008"), Name = "Азбука" },
+        new Publisher { Id = Guid.Parse("b0000000-0000-0000-0000-000000000009"), Name = "Росмэн" },
+        new Publisher { Id = Guid.Parse("b0000000-0000-0000-0000-000000000010"), Name = "Питер" }
     };
 }

@@ -1,5 +1,6 @@
 using Library.Application.Contracts;
 using Library.Application.Contracts.EditionType;
+using Library.Application.Contracts.Publisher;
 using Library.Application.Mapper;
 using Library.Application.Service;
 using Library.Domain;
@@ -24,8 +25,10 @@ builder.Services.AddScoped<IMapper, ServiceMapper>();
 builder.Services.AddSingleton<LibraryData>();
 
 builder.Services.AddScoped<IRepository<EditionType>, EditionTypeRepository>();
-//builder.Services.AddScoped<IEditionTypeReadService, EditionTypeService>();
+builder.Services.AddScoped<IRepository<Publisher>, PublisherRepository>();
+
 builder.Services.AddScoped<IApplicationCrudService<EditionTypeDto, EditionTypeDto, Guid>, EditionTypeService>();
+builder.Services.AddScoped<IApplicationCrudService<PublisherDto, PublisherDto, Guid>, PublisherService>();
 
 
 builder.Services.AddControllers();
