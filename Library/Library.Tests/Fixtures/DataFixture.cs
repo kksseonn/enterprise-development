@@ -38,11 +38,11 @@ public class DataFixture
     /// </summary>
     public DataFixture()
     {
-        EditionTypes = LibraryData.EditionTypes();
-        Publishers = LibraryData.Publishers();
-        Readers = LibraryData.Readers();
-        Books = LibraryData.Books(EditionTypes, Publishers);
-        Borrows = LibraryData.Borrows(Books, Readers);
+        EditionTypes = DataSeeder.EditionTypes();
+        Publishers = DataSeeder.Publishers();
+        Readers = DataSeeder.Readers();
+        Books = DataSeeder.Books(EditionTypes, Publishers);
+        Borrows = DataSeeder.Borrows(Books, Readers);
     }
 
 }

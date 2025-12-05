@@ -10,6 +10,7 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
     public DbSet<EditionType> EditionTypes { get; set; }
     public DbSet<Publisher> Publishers { get; set; }
     public DbSet<Reader> Readers { get; set; }
+    public DbSet<Book> Books { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -56,5 +57,7 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
             builder.Property(r => r.RegistrationDate)
                 .IsRequired();
         });
+
+
     }
 }

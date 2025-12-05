@@ -23,7 +23,7 @@ config.Scan(typeof(MappingRegister).Assembly);
 builder.Services.AddSingleton(config);
 builder.Services.AddScoped<IMapper, ServiceMapper>();
 
-builder.Services.AddSingleton<LibraryData>();
+builder.Services.AddSingleton<DataSeeder>();
 
 builder.Services.AddScoped<IRepository<EditionType>, EditionTypeRepository>();
 builder.Services.AddScoped<IRepository<Publisher>, PublisherRepository>();
