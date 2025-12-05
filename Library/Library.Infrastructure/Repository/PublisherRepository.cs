@@ -14,9 +14,9 @@ public class PublisherRepository(LibraryDbContext context) : IRepository<Publish
     }
 
     public async Task<Publisher?> Get(Guid id, CancellationToken ct = default) =>
-    await context.Publishers
-        .AsNoTracking()
-        .FirstOrDefaultAsync(e => e.Id == id, ct);
+        await context.Publishers
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Id == id, ct);
 
     public async Task<IReadOnlyList<Publisher>> GetAll(CancellationToken ct = default) =>
         await context.Publishers
@@ -25,13 +25,13 @@ public class PublisherRepository(LibraryDbContext context) : IRepository<Publish
 
     public async Task<Publisher?> Update(Publisher entity, CancellationToken ct = default)
     {
-        var existing = await context.Publishers.FirstOrDefaultAsync(e => e.Id == entity.Id, ct);
+        var existing = await context.Publishers
+            .FirstOrDefaultAsync(e => e.Id == entity.Id, ct);
 
         if (existing == null)
             return null;
 
         context.Entry(existing).CurrentValues.SetValues(entity);
-
         await context.SaveChangesAsync(ct);
 
         return existing;
@@ -39,7 +39,9 @@ public class PublisherRepository(LibraryDbContext context) : IRepository<Publish
 
     public async Task<bool> Delete(Guid id, CancellationToken ct = default)
     {
-        var entity = await context.Publishers.FirstOrDefaultAsync(e => e.Id == id);
+        var entity = await context.Publishers
+            .FirstOrDefaultAsync(e => e.Id == id, ct);
+
         if (entity == null)
             return false;
 

@@ -4,28 +4,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library.Infrastructure.Repository;
 
-public class EditionTypeRepository(LibraryDbContext context) : IRepository<EditionType>
+public class ReaderRepository(LibraryDbContext context) : IRepository<Reader>
 {
-    public async Task<EditionType> Create(EditionType entity, CancellationToken ct = default)
+    public async Task<Reader> Create(Reader entity, CancellationToken ct = default)
     {
-        var result = await context.EditionTypes.AddAsync(entity, ct);
+        var result = await context.Readers.AddAsync(entity, ct);
         await context.SaveChangesAsync(ct);
         return result.Entity;
     }
 
-    public async Task<EditionType?> Get(Guid id, CancellationToken ct = default) =>
-        await context.EditionTypes
+    public async Task<Reader?> Get(Guid id, CancellationToken ct = default) =>
+        await context.Readers
             .AsNoTracking()
             .FirstOrDefaultAsync(e => e.Id == id, ct);
 
-    public async Task<IReadOnlyList<EditionType>> GetAll(CancellationToken ct = default) =>
-        await context.EditionTypes
+    public async Task<IReadOnlyList<Reader>> GetAll(CancellationToken ct = default) =>
+        await context.Readers
             .AsNoTracking()
             .ToListAsync(ct);
 
-    public async Task<EditionType?> Update(EditionType entity, CancellationToken ct = default)
+    public async Task<Reader?> Update(Reader entity, CancellationToken ct = default)
     {
-        var existing = await context.EditionTypes
+        var existing = await context.Readers
             .FirstOrDefaultAsync(e => e.Id == entity.Id, ct);
 
         if (existing == null)
@@ -39,13 +39,13 @@ public class EditionTypeRepository(LibraryDbContext context) : IRepository<Editi
 
     public async Task<bool> Delete(Guid id, CancellationToken ct = default)
     {
-        var entity = await context.EditionTypes
+        var entity = await context.Readers
             .FirstOrDefaultAsync(e => e.Id == id, ct);
 
         if (entity == null)
             return false;
 
-        context.EditionTypes.Remove(entity);
+        context.Readers.Remove(entity);
         await context.SaveChangesAsync(ct);
         return true;
     }
