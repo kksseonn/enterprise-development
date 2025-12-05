@@ -11,14 +11,24 @@ public class Borrow
     public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary>
+    /// Идентификатор книги, которую выдали
+    /// </summary>
+    public required Guid BookId { get; set; }
+
+    /// <summary>
     /// Книга, которую выдали
     /// </summary>
-    public required Book Book { get; set; }
+    public virtual Book Book { get; set; }
+
+    /// <summary>
+    /// Идентификатор читателя, которому выдали
+    /// </summary>
+    public required Guid ReaderId { get; set; }
 
     /// <summary>
     /// Читатель, которому выдали
     /// </summary>
-    public required Reader Reader { get; set; }
+    public virtual Reader Reader { get; set; }
 
     /// <summary>
     /// Дата выдачи

@@ -13,7 +13,8 @@ public class BookService :
     private readonly IRepository<Book> _repository;
     private readonly IMapper _mapper;
 
-    public BookService(IRepository<Book> repository, IMapper mapper)
+    public BookService(IRepository<Book> repository,
+                       IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;
@@ -45,10 +46,7 @@ public class BookService :
 
         var updated = await _repository.Update(entity, ct);
 
-        if (updated == null)
-            throw new KeyNotFoundException($"Book with ID {dtoId} not found");
-
-        return _mapper.Map<BookDto>(updated);
+        return updated == null ? throw new KeyNotFoundException($"Book with ID {dtoId} not found") : _mapper.Map<BookDto>(updated);
     }
 
     public async Task<bool> Delete(Guid dtoId, CancellationToken ct = default)

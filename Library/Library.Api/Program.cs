@@ -1,5 +1,6 @@
 using Library.Application.Contracts;
 using Library.Application.Contracts.Book;
+using Library.Application.Contracts.Borrow;
 using Library.Application.Contracts.EditionType;
 using Library.Application.Contracts.Publisher;
 using Library.Application.Contracts.Reader;
@@ -30,11 +31,13 @@ builder.Services.AddScoped<IRepository<EditionType>, EditionTypeRepository>();
 builder.Services.AddScoped<IRepository<Publisher>, PublisherRepository>();
 builder.Services.AddScoped<IRepository<Reader>, ReaderRepository>();
 builder.Services.AddScoped<IRepository<Book>, BookRepository>();
+builder.Services.AddScoped<IRepository<Borrow>, BorrowRepository>();
 
 builder.Services.AddScoped<IApplicationCrudService<EditionTypeDto, EditionTypeDto, Guid>, EditionTypeService>();
 builder.Services.AddScoped<IApplicationCrudService<PublisherDto, PublisherDto, Guid>, PublisherService>();
 builder.Services.AddScoped<IApplicationCrudService<ReaderDto, ReaderDto, Guid>, ReaderService>();
 builder.Services.AddScoped<IApplicationCrudService<BookDto, BookDto, Guid>, BookService>();
+builder.Services.AddScoped<IApplicationCrudService<BorrowDto, BorrowDto, Guid>, BorrowService>();
 
 
 builder.Services.AddControllers();

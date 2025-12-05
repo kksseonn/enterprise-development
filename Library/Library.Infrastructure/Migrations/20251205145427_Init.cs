@@ -82,6 +82,34 @@ namespace Library.Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "borrow",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    BookId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ReaderId = table.Column<Guid>(type: "uuid", nullable: false),
+                    BorrowDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    Days = table.Column<int>(type: "integer", nullable: false),
+                    ReturnDate = table.Column<DateOnly>(type: "date", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_borrow", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_borrow_book_BookId",
+                        column: x => x.BookId,
+                        principalTable: "book",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_borrow_reader_ReaderId",
+                        column: x => x.ReaderId,
+                        principalTable: "reader",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_book_EditionTypeId",
                 table: "book",
@@ -91,11 +119,24 @@ namespace Library.Infrastructure.Migrations
                 name: "IX_book_PublisherId",
                 table: "book",
                 column: "PublisherId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_borrow_BookId",
+                table: "borrow",
+                column: "BookId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_borrow_ReaderId",
+                table: "borrow",
+                column: "ReaderId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "borrow");
+
             migrationBuilder.DropTable(
                 name: "book");
 

@@ -1,5 +1,4 @@
-﻿using Library.Domain.Data;
-using Library.Domain.Entities;
+﻿using Library.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -14,6 +13,7 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
     public DbSet<Publisher> Publishers { get; set; }
     public DbSet<Reader> Readers { get; set; }
     public DbSet<Book> Books { get; set; }
+    public DbSet<Borrow> Borrows { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -110,6 +110,30 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
 
             builder.Property(r => r.Year)
                 .IsRequired();
+        });
+
+        modelBuilder.Entity<Borrow>().ToTable("borrow");
+        modelBuilder.Entity<Borrow>(builder =>
+        {
+            builder.HasKey(b => b.Id);
+
+            builder.Property(b => b.BorrowDate)
+                .IsRequired();
+
+            builder.Property(b => b.Days)
+                .IsRequired();
+
+            builder.Property(b => b.ReturnDate);
+
+            builder.HasOne(b => b.Book)
+                .WithMany()
+                .HasForeignKey(b => b.BookId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(b => b.Reader)
+                .WithMany()
+                .HasForeignKey(b => b.ReaderId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

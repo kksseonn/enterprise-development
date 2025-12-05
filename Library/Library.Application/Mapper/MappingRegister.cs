@@ -2,6 +2,7 @@
 using Library.Application.Contracts.Publisher;
 using Library.Application.Contracts.Reader;
 using Library.Application.Contracts.Book;
+using Library.Application.Contracts.Borrow;
 using Library.Domain.Entities;
 using Mapster;
 
@@ -18,5 +19,6 @@ public class MappingRegister : IRegister
         config.NewConfig<Publisher, PublisherDto>();
         config.NewConfig<Reader, ReaderDto>();
         config.NewConfig<Book, BookDto>();
+        config.NewConfig<Borrow, BorrowDto>();
     }
 }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Library.Infrastructure.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20251205140028_Init")]
+    [Migration("20251205145427_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -68,6 +68,36 @@ namespace Library.Infrastructure.Migrations
                     b.HasIndex("PublisherId");
 
                     b.ToTable("book", (string)null);
+                });
+
+            modelBuilder.Entity("Library.Domain.Entities.Borrow", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BookId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("BorrowDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Days")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("ReaderId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly?>("ReturnDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("ReaderId");
+
+                    b.ToTable("borrow", (string)null);
                 });
 
             modelBuilder.Entity("Library.Domain.Entities.EditionType", b =>
@@ -157,6 +187,25 @@ namespace Library.Infrastructure.Migrations
                     b.Navigation("EditionType");
 
                     b.Navigation("Publisher");
+                });
+
+            modelBuilder.Entity("Library.Domain.Entities.Borrow", b =>
+                {
+                    b.HasOne("Library.Domain.Entities.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Library.Domain.Entities.Reader", "Reader")
+                        .WithMany()
+                        .HasForeignKey("ReaderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Reader");
                 });
 #pragma warning restore 612, 618
         }

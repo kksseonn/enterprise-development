@@ -38,7 +38,7 @@ public class Book
     /// <summary>
     /// Вид издания
     /// </summary>
-    public virtual EditionType? EditionType { get; set; }
+    public virtual EditionType EditionType { get; set; }
 
     /// <summary>
     /// Идентификатор издательства
@@ -48,7 +48,7 @@ public class Book
     /// <summary>
     /// Издательство
     /// </summary>
-    public virtual Publisher? Publisher { get; set; }
+    public virtual Publisher Publisher { get; set; }
 
     /// <summary>
     /// Год издания
