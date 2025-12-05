@@ -31,14 +31,24 @@ public class Book
     public List<string> Authors { get; set; } = [];
 
     /// <summary>
+    /// Идентификатор вида издания
+    /// </summary>
+    public required Guid EditionTypeId { get; set; }
+
+    /// <summary>
     /// Вид издания
     /// </summary>
-    public required EditionType EditionType { get; set; }
+    public virtual EditionType? EditionType { get; set; }
+
+    /// <summary>
+    /// Идентификатор издательства
+    /// </summary>
+    public required Guid PublisherId { get; set; }
 
     /// <summary>
     /// Издательство
     /// </summary>
-    public required Publisher Publisher { get; set; }
+    public virtual Publisher? Publisher { get; set; }
 
     /// <summary>
     /// Год издания

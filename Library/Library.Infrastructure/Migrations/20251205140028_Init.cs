@@ -51,19 +51,62 @@ namespace Library.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_reader", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "book",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    InventoryNumber = table.Column<int>(type: "integer", nullable: false),
+                    CatalogCode = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Authors = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    EditionTypeId = table.Column<Guid>(type: "uuid", nullable: false),
+                    PublisherId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Year = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_book", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_book_edition_type_EditionTypeId",
+                        column: x => x.EditionTypeId,
+                        principalTable: "edition_type",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_book_publisher_PublisherId",
+                        column: x => x.PublisherId,
+                        principalTable: "publisher",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_book_EditionTypeId",
+                table: "book",
+                column: "EditionTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_book_PublisherId",
+                table: "book",
+                column: "PublisherId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "book");
+
+            migrationBuilder.DropTable(
+                name: "reader");
+
+            migrationBuilder.DropTable(
                 name: "edition_type");
 
             migrationBuilder.DropTable(
                 name: "publisher");
-
-            migrationBuilder.DropTable(
-                name: "reader");
         }
     }
 }

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Library.Infrastructure.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20251205105515_Init")]
+    [Migration("20251205140028_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -27,6 +27,48 @@ namespace Library.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Library.Domain.Entities.Book", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Authors")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<string>("CatalogCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<Guid>("EditionTypeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("InventoryNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("PublisherId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EditionTypeId");
+
+                    b.HasIndex("PublisherId");
+
+                    b.ToTable("book", (string)null);
+                });
 
             modelBuilder.Entity("Library.Domain.Entities.EditionType", b =>
                 {
@@ -96,6 +138,25 @@ namespace Library.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("reader", (string)null);
+                });
+
+            modelBuilder.Entity("Library.Domain.Entities.Book", b =>
+                {
+                    b.HasOne("Library.Domain.Entities.EditionType", "EditionType")
+                        .WithMany()
+                        .HasForeignKey("EditionTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Library.Domain.Entities.Publisher", "Publisher")
+                        .WithMany()
+                        .HasForeignKey("PublisherId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("EditionType");
+
+                    b.Navigation("Publisher");
                 });
 #pragma warning restore 612, 618
         }
