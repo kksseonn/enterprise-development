@@ -1,7 +1,9 @@
-﻿using Library.Domain.Entities;
+﻿using Library.Domain.Data;
+using Library.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
 
 namespace Library.Infrastructure;
 
@@ -17,8 +19,6 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        base.OnModelCreating(modelBuilder);
-
         var stringListConverter = new ValueConverter<List<string>, string>(
                     v => string.Join(';', v),
                     v => v.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList()
@@ -29,6 +29,12 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
             l => l.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
             l => l.ToList()
         );
+
+        var edition_types = LibraryData.SeedEditionTypes();
+        var publishers = LibraryData.SeedPublishers();
+        var readers = LibraryData.SeedReaders();
+        var books = LibraryData.SeedBooks(edition_types, publishers);
+        var borrows = LibraryData.SeedBorrows(books, readers);
 
         modelBuilder.Entity<EditionType>().ToTable("edition_type");
         modelBuilder.Entity<EditionType>(builder =>
@@ -41,6 +47,8 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
                 .WithOne(b => b.EditionType)
                 .HasForeignKey(b => b.EditionTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasData(edition_types);
         });
 
         modelBuilder.Entity<Publisher>().ToTable("publisher");
@@ -54,6 +62,8 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
                 .WithOne(b => b.Publisher)
                 .HasForeignKey(b => b.PublisherId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasData(publishers);
         });
 
         modelBuilder.Entity<Reader>().ToTable("reader");
@@ -80,6 +90,8 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
 
             builder.Property(r => r.RegistrationDate)
                 .IsRequired();
+
+            builder.HasData(readers);
         });
 
         modelBuilder.Entity<Book>().ToTable("book");
@@ -110,6 +122,8 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
 
             builder.Property(r => r.Year)
                 .IsRequired();
+
+            builder.HasData(books);
         });
 
         modelBuilder.Entity<Borrow>().ToTable("borrow");
@@ -134,6 +148,8 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
                 .WithMany()
                 .HasForeignKey(b => b.ReaderId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasData(borrows);
         });
     }
 }

@@ -25,7 +25,7 @@ config.Scan(typeof(MappingRegister).Assembly);
 builder.Services.AddSingleton(config);
 builder.Services.AddScoped<IMapper, ServiceMapper>();
 
-builder.Services.AddSingleton<DataSeeder>();
+builder.Services.AddSingleton<LibraryData>();
 
 builder.Services.AddScoped<IRepository<EditionType>, EditionTypeRepository>();
 builder.Services.AddScoped<IRepository<Publisher>, PublisherRepository>();
@@ -58,7 +58,9 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var connectionString = builder.Configuration.GetConnectionString("Database")
-                       ?? "Host=localhost;Database=library;Username=qwerty;Password=qwerty";
+                       ?? "Host=localhost;Database=library;Username=postgres;Password=postgres";
+
+
 
 builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseNpgsql(connectionString)

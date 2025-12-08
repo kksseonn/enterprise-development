@@ -18,7 +18,7 @@ public class Borrow
     /// <summary>
     /// Книга, которую выдали
     /// </summary>
-    public virtual Book Book { get; set; }
+    public virtual Book? Book { get; set; }
 
     /// <summary>
     /// Идентификатор читателя, которому выдали
@@ -28,7 +28,7 @@ public class Borrow
     /// <summary>
     /// Читатель, которому выдали
     /// </summary>
-    public virtual Reader Reader { get; set; }
+    public virtual Reader? Reader { get; set; }
 
     /// <summary>
     /// Дата выдачи
