@@ -1,4 +1,4 @@
-﻿using Library.Application.Contracts;
+﻿using Library.Application.Contracts.Book;
 using Library.Application.Contracts.EditionType;
 using Library.Domain;
 using Library.Domain.Entities;
@@ -9,23 +9,8 @@ namespace Library.Application.Service;
 /// <summary>
 /// Сервис для работы с типами изданий, реализует чтение и CRUD операции
 /// </summary>
-public class EditionTypeService :
-    IEditionTypeReadService,
-    IApplicationCrudService<EditionTypeDto, EditionTypeDto, Guid>
+public class EditionTypeService(IRepository<EditionType> _repository, IMapper _mapper) : IEditionTypeCrudService
 {
-    private readonly IRepository<EditionType> _repository;
-    private readonly IMapper _mapper;
-
-    /// <summary>
-    /// Конструктор сервиса
-    /// </summary>
-    /// <param name="repository">Репозиторий типов изданий</param>
-    /// <param name="mapper">Маппер для DTO и сущностей</param>
-    public EditionTypeService(IRepository<EditionType> repository, IMapper mapper)
-    {
-        _repository = repository;
-        _mapper = mapper;
-    }
 
     /// <summary>
     /// Получает тип издания по идентификатору
@@ -59,7 +44,7 @@ public class EditionTypeService :
     /// <param name="dto">DTO типа издания</param>
     /// <param name="ct">Токен отмены</param>
     /// <returns>Созданный DTO типа издания</returns>
-    public async Task<EditionTypeDto> Create(EditionTypeDto dto, CancellationToken ct = default)
+    public async Task<EditionTypeDto> Create(EditionTypeCrudDto dto, CancellationToken ct = default)
     {
         var entity = _mapper.Map<EditionType>(dto);
         var created = await _repository.Create(entity, ct);
@@ -74,14 +59,17 @@ public class EditionTypeService :
     /// <param name="ct">Токен отмены</param>
     /// <returns>Обновленный DTO типа издания</returns>
     /// <exception cref="KeyNotFoundException">Если тип издания не найден</exception>
-    public async Task<EditionTypeDto> Update(EditionTypeDto dto, Guid dtoId, CancellationToken ct = default)
+    public async Task<EditionTypeDto> Update(EditionTypeCrudDto dto, Guid dtoId, CancellationToken ct = default)
     {
-        var entity = _mapper.Map<EditionType>(dto);
-        entity.Id = dtoId;
-        var updated = await _repository.Update(entity, ct);
+        var existingEntity = await _repository.Get(dtoId, ct)
+            ?? throw new KeyNotFoundException($"EditionType with ID {dtoId} not found");
+
+        _mapper.Map(dto, existingEntity);
+
+        var updated = await _repository.Update(existingEntity, ct);
 
         if (updated == null)
-            throw new KeyNotFoundException($"EditionType with ID {dtoId} not found");
+            throw new KeyNotFoundException($"EditionType with ID {dtoId} not found after update");
 
         return _mapper.Map<EditionTypeDto>(updated);
     }
@@ -95,5 +83,16 @@ public class EditionTypeService :
     public async Task<bool> Delete(Guid dtoId, CancellationToken ct = default)
     {
         return await _repository.Delete(dtoId, ct);
+    }
+
+    public async Task<IReadOnlyList<BookDto>> GetBooks(Guid editionTypeId, CancellationToken ct = default)
+    {
+        var entity = await _repository.Get(
+            editionTypeId,
+            ct,
+            includes: e => e.Books!
+        ) ?? throw new KeyNotFoundException($"Entity with ID {editionTypeId} not found");
+
+        return _mapper.Map<List<BookDto>>(entity.Books!);
     }
 }

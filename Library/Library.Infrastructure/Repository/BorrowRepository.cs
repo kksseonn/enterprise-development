@@ -1,6 +1,7 @@
 ﻿using Library.Domain;
 using Library.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Library.Infrastructure.Repository;
 
@@ -30,12 +31,28 @@ public class BorrowRepository(LibraryDbContext context) : IRepository<Borrow>
     /// <param name="id">Идентификатор выдачи</param>
     /// <param name="ct">Токен отмены</param>
     /// <returns>Объект Borrow или null, если не найден</returns>
-    public async Task<Borrow?> Get(Guid id, CancellationToken ct = default) =>
-        await _context.Borrows
+    public async Task<Borrow?> Get(
+        Guid id,
+        CancellationToken ct = default,
+        params Expression<Func<Borrow, object>>[] includes
+    )
+    {
+        IQueryable<Borrow> query = _context.Borrows
             .AsNoTracking()
-            .Include(b => b.Book)
-            .Include(b => b.Reader)
+            .Include(b => b.Book!)
+            .Include(b => b.Reader!);
+
+        if (includes.Any())
+        {
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+        }
+
+        return await query
             .FirstOrDefaultAsync(e => e.Id == id, ct);
+    }
 
     /// <summary>
     /// Получает все выдачи книг
@@ -57,20 +74,15 @@ public class BorrowRepository(LibraryDbContext context) : IRepository<Borrow>
     /// <returns>Обновленный объект Borrow или null, если не найден</returns>
     public async Task<Borrow?> Update(Borrow entity, CancellationToken ct = default)
     {
-        var existing = await _context.Borrows
-            .FirstOrDefaultAsync(e => e.Id == entity.Id, ct);
-
-        if (existing == null)
+        var exists = await _context.Borrows.AnyAsync(e => e.Id == entity.Id, ct);
+        if (!exists)
             return null;
 
-        _context.Entry(existing).CurrentValues.SetValues(entity);
+        _context.Borrows.Attach(entity).State = EntityState.Modified;
+
         await _context.SaveChangesAsync(ct);
 
-        // Загружаем навигационные свойства
-        await _context.Entry(existing).Reference(b => b.Book).LoadAsync(ct);
-        await _context.Entry(existing).Reference(b => b.Reader).LoadAsync(ct);
-
-        return existing;
+        return entity;
     }
 
     /// <summary>

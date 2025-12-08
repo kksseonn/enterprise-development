@@ -1,5 +1,6 @@
 ﻿using Library.Application.Contracts;
 using Library.Application.Contracts.Borrow;
+using Library.Application.Contracts.Publisher;
 using Library.Domain;
 using Library.Domain.Entities;
 using MapsterMapper;
@@ -9,23 +10,8 @@ namespace Library.Application.Service;
 /// <summary>
 /// Сервис для работы с выдачами книг, реализует чтение и CRUD операции
 /// </summary>
-public class BorrowService :
-    IBorrowReadService,
-    IApplicationCrudService<BorrowDto, BorrowDto, Guid>
+public class BorrowService(IRepository<Borrow> _repository, IMapper _mapper) : IBorrowCrudService
 {
-    private readonly IRepository<Borrow> _repository;
-    private readonly IMapper _mapper;
-
-    /// <summary>
-    /// Конструктор сервиса
-    /// </summary>
-    /// <param name="repository">Репозиторий выдач книг</param>
-    /// <param name="mapper">Маппер для DTO и сущностей</param>
-    public BorrowService(IRepository<Borrow> repository, IMapper mapper)
-    {
-        _repository = repository;
-        _mapper = mapper;
-    }
 
     /// <summary>
     /// Получает запись о выдаче по идентификатору
@@ -36,8 +22,11 @@ public class BorrowService :
     /// <exception cref="KeyNotFoundException">Если запись не найдена</exception>
     public async Task<BorrowDto> Get(Guid id, CancellationToken ct = default)
     {
-        var entity = await _repository.Get(id, ct)
-            ?? throw new KeyNotFoundException($"Borrow record with ID {id} not found");
+        var entity = await _repository.Get(
+            id,
+            ct,
+            includes: [b => b.Book!, b => b.Reader!]
+        ) ?? throw new KeyNotFoundException($"Borrow record with ID {id} not found");
 
         return _mapper.Map<BorrowDto>(entity);
     }
@@ -59,9 +48,10 @@ public class BorrowService :
     /// <param name="dto">DTO записи</param>
     /// <param name="ct">Токен отмены</param>
     /// <returns>Созданный DTO записи</returns>
-    public async Task<BorrowDto> Create(BorrowDto dto, CancellationToken ct = default)
+    public async Task<BorrowDto> Create(BorrowCrudDto dto, CancellationToken ct = default)
     {
         var entity = _mapper.Map<Borrow>(dto);
+        entity.DueDate = entity.BorrowDate.AddDays(entity.Days);
         var created = await _repository.Create(entity, ct);
         return _mapper.Map<BorrowDto>(created);
     }
@@ -74,15 +64,19 @@ public class BorrowService :
     /// <param name="ct">Токен отмены</param>
     /// <returns>Обновленный DTO записи</returns>
     /// <exception cref="KeyNotFoundException">Если запись не найдена</exception>
-    public async Task<BorrowDto> Update(BorrowDto dto, Guid dtoId, CancellationToken ct = default)
+    public async Task<BorrowDto> Update(BorrowCrudDto dto, Guid dtoId, CancellationToken ct = default)
     {
-        var entity = _mapper.Map<Borrow>(dto);
-        entity.Id = dtoId;
+        var existingEntity = await _repository.Get(dtoId, ct)
+            ?? throw new KeyNotFoundException($"Borrow record with ID {dtoId} not found");
 
-        var updated = await _repository.Update(entity, ct);
+        _mapper.Map(dto, existingEntity);
+
+        existingEntity.DueDate = existingEntity.BorrowDate.AddDays(existingEntity.Days);
+
+        var updated = await _repository.Update(existingEntity, ct);
 
         return updated == null
-            ? throw new KeyNotFoundException($"Borrow record with ID {dtoId} not found")
+            ? throw new KeyNotFoundException($"Borrow record with ID {dtoId} not found after update")
             : _mapper.Map<BorrowDto>(updated);
     }
 

@@ -1,6 +1,7 @@
 ﻿using Library.Domain;
 using Library.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Library.Infrastructure.Repository;
 
@@ -30,10 +31,25 @@ public class PublisherRepository(LibraryDbContext context) : IRepository<Publish
     /// <param name="id">Идентификатор издательства</param>
     /// <param name="ct">Токен отмены</param>
     /// <returns>Объект Publisher или null, если не найден</returns>
-    public async Task<Publisher?> Get(Guid id, CancellationToken ct = default) =>
-        await _context.Publishers
-            .AsNoTracking()
+    public async Task<Publisher?> Get(
+        Guid id,
+        CancellationToken ct = default,
+        params Expression<Func<Publisher, object>>[] includes // ✅ Добавлен includes
+    )
+    {
+        IQueryable<Publisher> query = _context.Publishers.AsNoTracking();
+
+        if (includes.Any())
+        {
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+        }
+
+        return await query
             .FirstOrDefaultAsync(e => e.Id == id, ct);
+    }
 
     /// <summary>
     /// Получает всех издательств
@@ -53,16 +69,15 @@ public class PublisherRepository(LibraryDbContext context) : IRepository<Publish
     /// <returns>Обновленный объект Publisher или null, если не найден</returns>
     public async Task<Publisher?> Update(Publisher entity, CancellationToken ct = default)
     {
-        var existing = await _context.Publishers
-            .FirstOrDefaultAsync(e => e.Id == entity.Id, ct);
-
-        if (existing == null)
+        var exists = await _context.Publishers.AnyAsync(e => e.Id == entity.Id, ct);
+        if (!exists)
             return null;
 
-        _context.Entry(existing).CurrentValues.SetValues(entity);
+        _context.Publishers.Attach(entity).State = EntityState.Modified;
+
         await _context.SaveChangesAsync(ct);
 
-        return existing;
+        return entity;
     }
 
     /// <summary>

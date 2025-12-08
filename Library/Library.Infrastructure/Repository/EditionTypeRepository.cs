@@ -1,6 +1,7 @@
 ﻿using Library.Domain;
 using Library.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Library.Infrastructure.Repository;
 
@@ -30,10 +31,25 @@ public class EditionTypeRepository(LibraryDbContext context) : IRepository<Editi
     /// <param name="id">Идентификатор типа издания</param>
     /// <param name="ct">Токен отмены</param>
     /// <returns>Объект EditionType или null, если не найден</returns>
-    public async Task<EditionType?> Get(Guid id, CancellationToken ct = default) =>
-        await _context.EditionTypes
-            .AsNoTracking()
+    public async Task<EditionType?> Get(
+        Guid id,
+        CancellationToken ct = default,
+        params Expression<Func<EditionType, object>>[] includes
+    )
+    {
+        IQueryable<EditionType> query = _context.EditionTypes.AsNoTracking();
+
+        if (includes.Any())
+        {
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+        }
+
+        return await query
             .FirstOrDefaultAsync(e => e.Id == id, ct);
+    }
 
     /// <summary>
     /// Получает все типы изданий
@@ -53,16 +69,15 @@ public class EditionTypeRepository(LibraryDbContext context) : IRepository<Editi
     /// <returns>Обновленный объект EditionType или null, если не найден</returns>
     public async Task<EditionType?> Update(EditionType entity, CancellationToken ct = default)
     {
-        var existing = await _context.EditionTypes
-            .FirstOrDefaultAsync(e => e.Id == entity.Id, ct);
-
-        if (existing == null)
+        var exists = await _context.EditionTypes.AnyAsync(e => e.Id == entity.Id, ct);
+        if (!exists)
             return null;
 
-        _context.Entry(existing).CurrentValues.SetValues(entity);
+        _context.EditionTypes.Attach(entity).State = EntityState.Modified;
+
         await _context.SaveChangesAsync(ct);
 
-        return existing;
+        return entity;
     }
 
     /// <summary>

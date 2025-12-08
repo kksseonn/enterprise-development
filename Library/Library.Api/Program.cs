@@ -1,4 +1,3 @@
-using Library.Application.Contracts;
 using Library.Application.Contracts.Book;
 using Library.Application.Contracts.Borrow;
 using Library.Application.Contracts.EditionType;
@@ -22,6 +21,7 @@ builder.AddServiceDefaults();
 
 var config = TypeAdapterConfig.GlobalSettings;
 config.Scan(typeof(MappingRegister).Assembly);
+
 builder.Services.AddSingleton(config);
 builder.Services.AddScoped<IMapper, ServiceMapper>();
 
@@ -33,11 +33,11 @@ builder.Services.AddScoped<IRepository<Reader>, ReaderRepository>();
 builder.Services.AddScoped<IRepository<Book>, BookRepository>();
 builder.Services.AddScoped<IRepository<Borrow>, BorrowRepository>();
 
-builder.Services.AddScoped<IApplicationCrudService<EditionTypeDto, EditionTypeDto, Guid>, EditionTypeService>();
-builder.Services.AddScoped<IApplicationCrudService<PublisherDto, PublisherDto, Guid>, PublisherService>();
-builder.Services.AddScoped<IApplicationCrudService<ReaderDto, ReaderDto, Guid>, ReaderService>();
-builder.Services.AddScoped<IApplicationCrudService<BookDto, BookDto, Guid>, BookService>();
-builder.Services.AddScoped<IApplicationCrudService<BorrowDto, BorrowDto, Guid>, BorrowService>();
+builder.Services.AddScoped<IEditionTypeCrudService, EditionTypeService>();
+builder.Services.AddScoped<IPublisherCrudService, PublisherService>();
+builder.Services.AddScoped<IReaderCrudService, ReaderService>();
+builder.Services.AddScoped<IBookCrudService, BookService>();
+builder.Services.AddScoped<IBorrowCrudService, BorrowService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -56,8 +56,8 @@ builder.Services.AddSwaggerGen(c =>
     }
 });
 
-var connectionString = builder.Configuration.GetConnectionString("Database")
-                       ?? "Host=localhost;Database=library;Username=postgres;Password=postgres";
+var connectionString = builder.Configuration.GetConnectionString("LibraryDb")
+                       ?? "Server=localhost;Port=5432;Database=library;Username=postgres;Password=postgres";
 
 builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseNpgsql(connectionString)

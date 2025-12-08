@@ -43,7 +43,7 @@ public class Borrow
     /// <summary>
     /// Плановая дата возврата
     /// </summary>
-    public DateOnly DueDate => BorrowDate.AddDays(Days);
+    public DateOnly DueDate { get; set; }
 
     /// <summary>
     /// Фактическая дата возврата книги (null, если ещё не сдана)

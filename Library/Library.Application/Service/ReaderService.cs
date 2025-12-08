@@ -1,4 +1,4 @@
-﻿using Library.Application.Contracts;
+﻿using Library.Application.Contracts.Borrow;
 using Library.Application.Contracts.Reader;
 using Library.Domain;
 using Library.Domain.Entities;
@@ -9,23 +9,8 @@ namespace Library.Application.Service;
 /// <summary>
 /// Сервис для работы с читателями, реализует чтение и CRUD операции
 /// </summary>
-public class ReaderService :
-    IReaderReadService,
-    IApplicationCrudService<ReaderDto, ReaderDto, Guid>
+public class ReaderService(IRepository<Reader> _repository, IMapper _mapper) : IReaderCrudService
 {
-    private readonly IRepository<Reader> _repository;
-    private readonly IMapper _mapper;
-
-    /// <summary>
-    /// Конструктор сервиса
-    /// </summary>
-    /// <param name="repository">Репозиторий читателей</param>
-    /// <param name="mapper">Маппер для DTO и сущностей</param>
-    public ReaderService(IRepository<Reader> repository, IMapper mapper)
-    {
-        _repository = repository;
-        _mapper = mapper;
-    }
 
     /// <summary>
     /// Получает читателя по идентификатору
@@ -59,9 +44,12 @@ public class ReaderService :
     /// <param name="dto">DTO читателя</param>
     /// <param name="ct">Токен отмены</param>
     /// <returns>Созданный DTO читателя</returns>
-    public async Task<ReaderDto> Create(ReaderDto dto, CancellationToken ct = default)
+    public async Task<ReaderDto> Create(ReaderCrudDto dto, CancellationToken ct = default)
     {
         var entity = _mapper.Map<Reader>(dto);
+
+        entity.RegistrationDate = DateOnly.FromDateTime(DateTime.UtcNow);
+
         var created = await _repository.Create(entity, ct);
         return _mapper.Map<ReaderDto>(created);
     }
@@ -74,16 +62,19 @@ public class ReaderService :
     /// <param name="ct">Токен отмены</param>
     /// <returns>Обновленный DTO читателя</returns>
     /// <exception cref="KeyNotFoundException">Если читатель не найден</exception>
-    public async Task<ReaderDto> Update(ReaderDto dto, Guid dtoId, CancellationToken ct = default)
+    public async Task<ReaderDto> Update(ReaderCrudDto dto, Guid dtoId, CancellationToken ct = default)
     {
-        var entity = _mapper.Map<Reader>(dto);
-        entity.Id = dtoId;
-        var updated = await _repository.Update(entity, ct);
+        var existingEntity = await _repository.Get(dtoId, ct)
+            ?? throw new KeyNotFoundException($"Reader with ID {dtoId} not found");
+
+        _mapper.Map(dto, existingEntity);
+
+        var updated = await _repository.Update(existingEntity, ct);
 
         if (updated == null)
-            throw new KeyNotFoundException($"Reader with ID {dtoId} not found");
+            throw new KeyNotFoundException($"Reader with ID {dtoId} not found after update");
 
-        return _mapper.Map<ReaderDto>(updated);
+        return _mapper.Map<ReaderDto>(updated!);
     }
 
     /// <summary>
@@ -95,5 +86,16 @@ public class ReaderService :
     public async Task<bool> Delete(Guid dtoId, CancellationToken ct = default)
     {
         return await _repository.Delete(dtoId, ct);
+    }
+
+    public async Task<IReadOnlyList<BorrowDto>> GetBorrows(Guid readerId, CancellationToken ct = default)
+    {
+        var entity = await _repository.Get(
+            readerId,
+            ct,
+            includes: r => r.Borrows!
+        ) ?? throw new KeyNotFoundException($"Entity with ID {readerId} not found");
+
+        return _mapper.Map<List<BorrowDto>>(entity.Borrows!);
     }
 }

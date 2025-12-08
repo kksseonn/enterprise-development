@@ -1,6 +1,7 @@
 ﻿using Library.Domain;
 using Library.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Library.Infrastructure.Repository;
 
@@ -30,12 +31,28 @@ public class BookRepository(LibraryDbContext context) : IRepository<Book>
     /// <param name="id">Идентификатор книги</param>
     /// <param name="ct">Токен отмены</param>
     /// <returns>Объект Book или null, если не найден</returns>
-    public async Task<Book?> Get(Guid id, CancellationToken ct = default) =>
-        await _context.Books
+    public async Task<Book?> Get(
+        Guid id,
+        CancellationToken ct = default,
+        params Expression<Func<Book, object>>[] includes
+    )
+    {
+        IQueryable<Book> query = _context.Books
             .AsNoTracking()
-            .Include(b => b.EditionType)
-            .Include(b => b.Publisher)
+            .Include(b => b.EditionType!)
+            .Include(b => b.Publisher!);
+
+       if (includes.Any())
+        {
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+        }
+
+        return await query
             .FirstOrDefaultAsync(e => e.Id == id, ct);
+    }
 
     /// <summary>
     /// Получает все книги
@@ -57,24 +74,15 @@ public class BookRepository(LibraryDbContext context) : IRepository<Book>
     /// <returns>Обновленный объект Book или null, если не найден</returns>
     public async Task<Book?> Update(Book entity, CancellationToken ct = default)
     {
-        var existing = await _context.Books
-            .FirstOrDefaultAsync(e => e.Id == entity.Id, ct);
-
-        if (existing == null)
+        var exists = await _context.Books.AnyAsync(e => e.Id == entity.Id, ct);
+        if (!exists)
             return null;
 
-        _context.Entry(existing).CurrentValues.SetValues(entity);
-
-        // Обновляем навигационное свойство Authors
-        existing.Authors = entity.Authors;
+        _context.Books.Attach(entity).State = EntityState.Modified;
 
         await _context.SaveChangesAsync(ct);
 
-        // Загружаем навигационные свойства
-        await _context.Entry(existing).Reference(b => b.EditionType).LoadAsync(ct);
-        await _context.Entry(existing).Reference(b => b.Publisher).LoadAsync(ct);
-
-        return existing;
+        return entity;
     }
 
     /// <summary>

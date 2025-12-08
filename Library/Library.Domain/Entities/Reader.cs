@@ -39,4 +39,9 @@ public class Reader
     /// Дата регистрации
     /// </summary>
     public required DateOnly RegistrationDate { get; set; }
+
+    /// <summary>
+    /// Список записей о выдаче
+    /// </summary>
+    public virtual List<Borrow>? Borrows { get; set; } = new List<Borrow>();
 }

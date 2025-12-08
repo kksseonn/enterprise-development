@@ -54,4 +54,9 @@ public class Book
     /// Год издания
     /// </summary>
     public required int Year { get; set; }
+
+    /// <summary>
+    /// Записи о выдаче данной книги
+    /// </summary>
+    public virtual List<Borrow>? Borrows { get; set; } = new List<Borrow>();
 }

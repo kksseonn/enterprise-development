@@ -1,5 +1,7 @@
 ﻿using Library.Application.Contracts;
 using Library.Application.Contracts.Book;
+using Library.Application.Contracts.Borrow;
+using Library.Application.Contracts.Publisher;
 using Library.Domain;
 using Library.Domain.Entities;
 using MapsterMapper;
@@ -9,23 +11,8 @@ namespace Library.Application.Service;
 /// <summary>
 /// Сервис для работы с книгами, реализует чтение и CRUD операции
 /// </summary>
-public class BookService :
-    IBookReadService,
-    IApplicationCrudService<BookDto, BookDto, Guid>
+public class BookService(IRepository<Book> _repository, IMapper _mapper) : IBookCrudService
 {
-    private readonly IRepository<Book> _repository;
-    private readonly IMapper _mapper;
-
-    /// <summary>
-    /// Конструктор сервиса
-    /// </summary>
-    /// <param name="repository">Репозиторий книг</param>
-    /// <param name="mapper">Маппер для DTO и сущностей</param>
-    public BookService(IRepository<Book> repository, IMapper mapper)
-    {
-        _repository = repository;
-        _mapper = mapper;
-    }
 
     /// <summary>
     /// Получает книгу по идентификатору
@@ -36,8 +23,12 @@ public class BookService :
     /// <exception cref="KeyNotFoundException">Если книга не найдена</exception>
     public async Task<BookDto> Get(Guid id, CancellationToken ct = default)
     {
-        var entity = await _repository.Get(id, ct)
-            ?? throw new KeyNotFoundException($"Book with ID {id} not found");
+        var entity = await _repository.Get(
+            id,
+            ct,
+            includes: [b => b.Publisher!, b => b.EditionType!]
+        ) ?? throw new KeyNotFoundException($"Book with ID {id} not found");
+
         return _mapper.Map<BookDto>(entity);
     }
 
@@ -58,7 +49,7 @@ public class BookService :
     /// <param name="dto">DTO книги</param>
     /// <param name="ct">Токен отмены</param>
     /// <returns>Созданный DTO книги</returns>
-    public async Task<BookDto> Create(BookDto dto, CancellationToken ct = default)
+    public async Task<BookDto> Create(BookCrudDto dto, CancellationToken ct = default)
     {
         var entity = _mapper.Map<Book>(dto);
         var created = await _repository.Create(entity, ct);
@@ -73,15 +64,17 @@ public class BookService :
     /// <param name="ct">Токен отмены</param>
     /// <returns>Обновленный DTO книги</returns>
     /// <exception cref="KeyNotFoundException">Если книга не найдена</exception>
-    public async Task<BookDto> Update(BookDto dto, Guid dtoId, CancellationToken ct = default)
+    public async Task<BookDto> Update(BookCrudDto dto, Guid dtoId, CancellationToken ct = default)
     {
-        var entity = _mapper.Map<Book>(dto);
-        entity.Id = dtoId;
+        var existingEntity = await _repository.Get(dtoId, ct)
+            ?? throw new KeyNotFoundException($"Book with ID {dtoId} not found");
 
-        var updated = await _repository.Update(entity, ct);
+        _mapper.Map(dto, existingEntity);
+
+        var updated = await _repository.Update(existingEntity, ct);
 
         return updated == null
-            ? throw new KeyNotFoundException($"Book with ID {dtoId} not found")
+            ? throw new KeyNotFoundException($"Book with ID {dtoId} not found after update")
             : _mapper.Map<BookDto>(updated);
     }
 
@@ -94,5 +87,16 @@ public class BookService :
     public async Task<bool> Delete(Guid dtoId, CancellationToken ct = default)
     {
         return await _repository.Delete(dtoId, ct);
+    }
+
+    public async Task<IReadOnlyList<BorrowDto>> GetBorrows(Guid bookId, CancellationToken ct = default)
+    {
+        var entity = await _repository.Get(
+            bookId,
+            ct,
+            includes: b => b.Borrows!
+        ) ?? throw new KeyNotFoundException($"Entity with ID {bookId} not found");
+
+        return _mapper.Map<List<BorrowDto>>(entity.Borrows!);
     }
 }

@@ -66,11 +66,6 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
                 .IsRequired()
                 .HasMaxLength(100);
 
-            builder.HasMany<Book>()
-                .WithOne(b => b.EditionType)
-                .HasForeignKey(b => b.EditionTypeId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.HasData(editionTypes);
         });
 
@@ -80,11 +75,6 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
             builder.Property(r => r.Name)
                 .IsRequired()
                 .HasMaxLength(100);
-
-            builder.HasMany<Book>()
-                .WithOne(b => b.Publisher)
-                .HasForeignKey(b => b.PublisherId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasData(publishers);
         });
@@ -157,18 +147,21 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
             builder.Property(b => b.BorrowDate)
                 .IsRequired();
 
+            builder.Property(b => b.DueDate)
+                .IsRequired();
+
             builder.Property(b => b.Days)
                 .IsRequired();
 
             builder.Property(b => b.ReturnDate);
 
             builder.HasOne(b => b.Book)
-                .WithMany()
+                .WithMany(b => b.Borrows!)
                 .HasForeignKey(b => b.BookId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(b => b.Reader)
-                .WithMany()
+                .WithMany(r => r.Borrows!)
                 .HasForeignKey(b => b.ReaderId)
                 .OnDelete(DeleteBehavior.Restrict);
 

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Library.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedInitialData : Migration
+    public partial class InitialSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -75,13 +75,13 @@ namespace Library.Infrastructure.Migrations
                         column: x => x.EditionTypeId,
                         principalTable: "edition_type",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_book_publisher_PublisherId",
                         column: x => x.PublisherId,
                         principalTable: "publisher",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -93,6 +93,7 @@ namespace Library.Infrastructure.Migrations
                     ReaderId = table.Column<Guid>(type: "uuid", nullable: false),
                     BorrowDate = table.Column<DateOnly>(type: "date", nullable: false),
                     Days = table.Column<int>(type: "integer", nullable: false),
+                    DueDate = table.Column<DateOnly>(type: "date", nullable: false),
                     ReturnDate = table.Column<DateOnly>(type: "date", nullable: true)
                 },
                 constraints: table =>
@@ -192,28 +193,28 @@ namespace Library.Infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "borrow",
-                columns: new[] { "Id", "BookId", "BorrowDate", "Days", "ReaderId", "ReturnDate" },
+                columns: new[] { "Id", "BookId", "BorrowDate", "Days", "DueDate", "ReaderId", "ReturnDate" },
                 values: new object[,]
                 {
-                    { new Guid("e0000000-0000-0000-0000-000000000001"), new Guid("d0000000-0000-0000-0000-000000000001"), new DateOnly(2024, 1, 10), 14, new Guid("c0000000-0000-0000-0000-000000000001"), new DateOnly(2024, 1, 24) },
-                    { new Guid("e0000000-0000-0000-0000-000000000002"), new Guid("d0000000-0000-0000-0000-000000000002"), new DateOnly(2024, 7, 1), 10, new Guid("c0000000-0000-0000-0000-000000000002"), new DateOnly(2024, 7, 11) },
-                    { new Guid("e0000000-0000-0000-0000-000000000003"), new Guid("d0000000-0000-0000-0000-000000000003"), new DateOnly(2024, 8, 5), 7, new Guid("c0000000-0000-0000-0000-000000000004"), new DateOnly(2024, 8, 12) },
-                    { new Guid("e0000000-0000-0000-0000-000000000004"), new Guid("d0000000-0000-0000-0000-000000000004"), new DateOnly(2024, 5, 1), 20, new Guid("c0000000-0000-0000-0000-000000000005"), new DateOnly(2024, 5, 21) },
-                    { new Guid("e0000000-0000-0000-0000-000000000005"), new Guid("d0000000-0000-0000-0000-000000000005"), new DateOnly(2024, 3, 1), 14, new Guid("c0000000-0000-0000-0000-000000000007"), new DateOnly(2024, 3, 15) },
-                    { new Guid("e0000000-0000-0000-0000-000000000006"), new Guid("d0000000-0000-0000-0000-000000000006"), new DateOnly(2025, 9, 25), 30, new Guid("c0000000-0000-0000-0000-000000000001"), null },
-                    { new Guid("e0000000-0000-0000-0000-000000000007"), new Guid("d0000000-0000-0000-0000-000000000007"), new DateOnly(2025, 9, 30), 20, new Guid("c0000000-0000-0000-0000-000000000002"), null },
-                    { new Guid("e0000000-0000-0000-0000-000000000008"), new Guid("d0000000-0000-0000-0000-000000000008"), new DateOnly(2025, 10, 1), 15, new Guid("c0000000-0000-0000-0000-000000000003"), null },
-                    { new Guid("e0000000-0000-0000-0000-000000000009"), new Guid("d0000000-0000-0000-0000-000000000009"), new DateOnly(2025, 10, 3), 14, new Guid("c0000000-0000-0000-0000-000000000004"), null },
-                    { new Guid("e0000000-0000-0000-0000-000000000010"), new Guid("d0000000-0000-0000-0000-000000000010"), new DateOnly(2025, 10, 5), 21, new Guid("c0000000-0000-0000-0000-000000000005"), null },
-                    { new Guid("e0000000-0000-0000-0000-000000000011"), new Guid("d0000000-0000-0000-0000-000000000001"), new DateOnly(2025, 9, 28), 30, new Guid("c0000000-0000-0000-0000-000000000002"), null },
-                    { new Guid("e0000000-0000-0000-0000-000000000012"), new Guid("d0000000-0000-0000-0000-000000000003"), new DateOnly(2025, 10, 7), 10, new Guid("c0000000-0000-0000-0000-000000000004"), null },
-                    { new Guid("e0000000-0000-0000-0000-000000000013"), new Guid("d0000000-0000-0000-0000-000000000005"), new DateOnly(2025, 10, 8), 14, new Guid("c0000000-0000-0000-0000-000000000010"), null },
-                    { new Guid("e0000000-0000-0000-0000-000000000014"), new Guid("d0000000-0000-0000-0000-000000000002"), new DateOnly(2025, 10, 9), 30, new Guid("c0000000-0000-0000-0000-000000000008"), null },
-                    { new Guid("e0000000-0000-0000-0000-000000000016"), new Guid("d0000000-0000-0000-0000-000000000011"), new DateOnly(2025, 6, 1), 14, new Guid("c0000000-0000-0000-0000-000000000010"), new DateOnly(2025, 6, 15) },
-                    { new Guid("e0000000-0000-0000-0000-000000000017"), new Guid("d0000000-0000-0000-0000-000000000012"), new DateOnly(2025, 3, 1), 10, new Guid("c0000000-0000-0000-0000-000000000003"), new DateOnly(2025, 3, 11) },
-                    { new Guid("e0000000-0000-0000-0000-000000000018"), new Guid("d0000000-0000-0000-0000-000000000013"), new DateOnly(2025, 4, 1), 21, new Guid("c0000000-0000-0000-0000-000000000001"), new DateOnly(2025, 4, 22) },
-                    { new Guid("e0000000-0000-0000-0000-000000000019"), new Guid("d0000000-0000-0000-0000-000000000014"), new DateOnly(2025, 5, 5), 10, new Guid("c0000000-0000-0000-0000-000000000007"), new DateOnly(2025, 5, 15) },
-                    { new Guid("e0000000-0000-0000-0000-000000000020"), new Guid("d0000000-0000-0000-0000-000000000015"), new DateOnly(2025, 6, 5), 14, new Guid("c0000000-0000-0000-0000-000000000009"), new DateOnly(2025, 6, 19) }
+                    { new Guid("e0000000-0000-0000-0000-000000000001"), new Guid("d0000000-0000-0000-0000-000000000001"), new DateOnly(2024, 1, 10), 14, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000001"), new DateOnly(2024, 1, 24) },
+                    { new Guid("e0000000-0000-0000-0000-000000000002"), new Guid("d0000000-0000-0000-0000-000000000002"), new DateOnly(2024, 7, 1), 10, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000002"), new DateOnly(2024, 7, 11) },
+                    { new Guid("e0000000-0000-0000-0000-000000000003"), new Guid("d0000000-0000-0000-0000-000000000003"), new DateOnly(2024, 8, 5), 7, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000004"), new DateOnly(2024, 8, 12) },
+                    { new Guid("e0000000-0000-0000-0000-000000000004"), new Guid("d0000000-0000-0000-0000-000000000004"), new DateOnly(2024, 5, 1), 20, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000005"), new DateOnly(2024, 5, 21) },
+                    { new Guid("e0000000-0000-0000-0000-000000000005"), new Guid("d0000000-0000-0000-0000-000000000005"), new DateOnly(2024, 3, 1), 14, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000007"), new DateOnly(2024, 3, 15) },
+                    { new Guid("e0000000-0000-0000-0000-000000000006"), new Guid("d0000000-0000-0000-0000-000000000006"), new DateOnly(2025, 9, 25), 30, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000001"), null },
+                    { new Guid("e0000000-0000-0000-0000-000000000007"), new Guid("d0000000-0000-0000-0000-000000000007"), new DateOnly(2025, 9, 30), 20, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000002"), null },
+                    { new Guid("e0000000-0000-0000-0000-000000000008"), new Guid("d0000000-0000-0000-0000-000000000008"), new DateOnly(2025, 10, 1), 15, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000003"), null },
+                    { new Guid("e0000000-0000-0000-0000-000000000009"), new Guid("d0000000-0000-0000-0000-000000000009"), new DateOnly(2025, 10, 3), 14, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000004"), null },
+                    { new Guid("e0000000-0000-0000-0000-000000000010"), new Guid("d0000000-0000-0000-0000-000000000010"), new DateOnly(2025, 10, 5), 21, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000005"), null },
+                    { new Guid("e0000000-0000-0000-0000-000000000011"), new Guid("d0000000-0000-0000-0000-000000000001"), new DateOnly(2025, 9, 28), 30, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000002"), null },
+                    { new Guid("e0000000-0000-0000-0000-000000000012"), new Guid("d0000000-0000-0000-0000-000000000003"), new DateOnly(2025, 10, 7), 10, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000004"), null },
+                    { new Guid("e0000000-0000-0000-0000-000000000013"), new Guid("d0000000-0000-0000-0000-000000000005"), new DateOnly(2025, 10, 8), 14, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000010"), null },
+                    { new Guid("e0000000-0000-0000-0000-000000000014"), new Guid("d0000000-0000-0000-0000-000000000002"), new DateOnly(2025, 10, 9), 30, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000008"), null },
+                    { new Guid("e0000000-0000-0000-0000-000000000016"), new Guid("d0000000-0000-0000-0000-000000000011"), new DateOnly(2025, 6, 1), 14, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000010"), new DateOnly(2025, 6, 15) },
+                    { new Guid("e0000000-0000-0000-0000-000000000017"), new Guid("d0000000-0000-0000-0000-000000000012"), new DateOnly(2025, 3, 1), 10, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000003"), new DateOnly(2025, 3, 11) },
+                    { new Guid("e0000000-0000-0000-0000-000000000018"), new Guid("d0000000-0000-0000-0000-000000000013"), new DateOnly(2025, 4, 1), 21, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000001"), new DateOnly(2025, 4, 22) },
+                    { new Guid("e0000000-0000-0000-0000-000000000019"), new Guid("d0000000-0000-0000-0000-000000000014"), new DateOnly(2025, 5, 5), 10, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000007"), new DateOnly(2025, 5, 15) },
+                    { new Guid("e0000000-0000-0000-0000-000000000020"), new Guid("d0000000-0000-0000-0000-000000000015"), new DateOnly(2025, 6, 5), 14, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000009"), new DateOnly(2025, 6, 19) }
                 });
 
             migrationBuilder.CreateIndex(

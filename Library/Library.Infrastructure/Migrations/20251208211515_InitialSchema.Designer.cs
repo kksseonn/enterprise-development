@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Library.Infrastructure.Migrations
 {
     [DbContext(typeof(LibraryDbContext))]
-    [Migration("20251208111441_SeedInitialData")]
-    partial class SeedInitialData
+    [Migration("20251208211515_InitialSchema")]
+    partial class InitialSchema
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -307,6 +307,9 @@ namespace Library.Infrastructure.Migrations
                     b.Property<int>("Days")
                         .HasColumnType("integer");
 
+                    b.Property<DateOnly>("DueDate")
+                        .HasColumnType("date");
+
                     b.Property<Guid>("ReaderId")
                         .HasColumnType("uuid");
 
@@ -328,6 +331,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000001"),
                             BorrowDate = new DateOnly(2024, 1, 10),
                             Days = 14,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000001"),
                             ReturnDate = new DateOnly(2024, 1, 24)
                         },
@@ -337,6 +341,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000002"),
                             BorrowDate = new DateOnly(2024, 7, 1),
                             Days = 10,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000002"),
                             ReturnDate = new DateOnly(2024, 7, 11)
                         },
@@ -346,6 +351,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000003"),
                             BorrowDate = new DateOnly(2024, 8, 5),
                             Days = 7,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000004"),
                             ReturnDate = new DateOnly(2024, 8, 12)
                         },
@@ -355,6 +361,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000004"),
                             BorrowDate = new DateOnly(2024, 5, 1),
                             Days = 20,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000005"),
                             ReturnDate = new DateOnly(2024, 5, 21)
                         },
@@ -364,6 +371,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000005"),
                             BorrowDate = new DateOnly(2024, 3, 1),
                             Days = 14,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000007"),
                             ReturnDate = new DateOnly(2024, 3, 15)
                         },
@@ -373,6 +381,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000011"),
                             BorrowDate = new DateOnly(2025, 6, 1),
                             Days = 14,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000010"),
                             ReturnDate = new DateOnly(2025, 6, 15)
                         },
@@ -382,6 +391,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000012"),
                             BorrowDate = new DateOnly(2025, 3, 1),
                             Days = 10,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000003"),
                             ReturnDate = new DateOnly(2025, 3, 11)
                         },
@@ -391,6 +401,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000013"),
                             BorrowDate = new DateOnly(2025, 4, 1),
                             Days = 21,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000001"),
                             ReturnDate = new DateOnly(2025, 4, 22)
                         },
@@ -400,6 +411,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000014"),
                             BorrowDate = new DateOnly(2025, 5, 5),
                             Days = 10,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000007"),
                             ReturnDate = new DateOnly(2025, 5, 15)
                         },
@@ -409,6 +421,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000015"),
                             BorrowDate = new DateOnly(2025, 6, 5),
                             Days = 14,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000009"),
                             ReturnDate = new DateOnly(2025, 6, 19)
                         },
@@ -418,6 +431,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000006"),
                             BorrowDate = new DateOnly(2025, 9, 25),
                             Days = 30,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000001")
                         },
                         new
@@ -426,6 +440,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000007"),
                             BorrowDate = new DateOnly(2025, 9, 30),
                             Days = 20,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000002")
                         },
                         new
@@ -434,6 +449,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000008"),
                             BorrowDate = new DateOnly(2025, 10, 1),
                             Days = 15,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000003")
                         },
                         new
@@ -442,6 +458,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000009"),
                             BorrowDate = new DateOnly(2025, 10, 3),
                             Days = 14,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000004")
                         },
                         new
@@ -450,6 +467,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000010"),
                             BorrowDate = new DateOnly(2025, 10, 5),
                             Days = 21,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000005")
                         },
                         new
@@ -458,6 +476,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000001"),
                             BorrowDate = new DateOnly(2025, 9, 28),
                             Days = 30,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000002")
                         },
                         new
@@ -466,6 +485,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000003"),
                             BorrowDate = new DateOnly(2025, 10, 7),
                             Days = 10,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000004")
                         },
                         new
@@ -474,6 +494,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000005"),
                             BorrowDate = new DateOnly(2025, 10, 8),
                             Days = 14,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000010")
                         },
                         new
@@ -482,6 +503,7 @@ namespace Library.Infrastructure.Migrations
                             BookId = new Guid("d0000000-0000-0000-0000-000000000002"),
                             BorrowDate = new DateOnly(2025, 10, 9),
                             Days = 30,
+                            DueDate = new DateOnly(1, 1, 1),
                             ReaderId = new Guid("c0000000-0000-0000-0000-000000000008")
                         });
                 });
@@ -765,15 +787,15 @@ namespace Library.Infrastructure.Migrations
             modelBuilder.Entity("Library.Domain.Entities.Book", b =>
                 {
                     b.HasOne("Library.Domain.Entities.EditionType", "EditionType")
-                        .WithMany()
+                        .WithMany("Books")
                         .HasForeignKey("EditionTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Library.Domain.Entities.Publisher", "Publisher")
-                        .WithMany()
+                        .WithMany("Books")
                         .HasForeignKey("PublisherId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("EditionType");
@@ -784,13 +806,13 @@ namespace Library.Infrastructure.Migrations
             modelBuilder.Entity("Library.Domain.Entities.Borrow", b =>
                 {
                     b.HasOne("Library.Domain.Entities.Book", "Book")
-                        .WithMany()
+                        .WithMany("Borrows")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Library.Domain.Entities.Reader", "Reader")
-                        .WithMany()
+                        .WithMany("Borrows")
                         .HasForeignKey("ReaderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -798,6 +820,26 @@ namespace Library.Infrastructure.Migrations
                     b.Navigation("Book");
 
                     b.Navigation("Reader");
+                });
+
+            modelBuilder.Entity("Library.Domain.Entities.Book", b =>
+                {
+                    b.Navigation("Borrows");
+                });
+
+            modelBuilder.Entity("Library.Domain.Entities.EditionType", b =>
+                {
+                    b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("Library.Domain.Entities.Publisher", b =>
+                {
+                    b.Navigation("Books");
+                });
+
+            modelBuilder.Entity("Library.Domain.Entities.Reader", b =>
+                {
+                    b.Navigation("Borrows");
                 });
 #pragma warning restore 612, 618
         }

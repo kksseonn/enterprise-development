@@ -1,6 +1,7 @@
 ﻿using Library.Domain;
 using Library.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Library.Infrastructure.Repository;
 
@@ -30,10 +31,25 @@ public class ReaderRepository(LibraryDbContext context) : IRepository<Reader>
     /// <param name="id">Идентификатор читателя</param>
     /// <param name="ct">Токен отмены</param>
     /// <returns>Объект Reader или null, если не найден</returns>
-    public async Task<Reader?> Get(Guid id, CancellationToken ct = default) =>
-        await _context.Readers
-            .AsNoTracking()
+    public async Task<Reader?> Get(
+        Guid id,
+        CancellationToken ct = default,
+        params Expression<Func<Reader, object>>[] includes
+    )
+    {
+        IQueryable<Reader> query = _context.Readers.AsNoTracking();
+
+        if (includes.Any())
+        {
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+        }
+
+        return await query
             .FirstOrDefaultAsync(e => e.Id == id, ct);
+    }
 
     /// <summary>
     /// Получает всех читателей

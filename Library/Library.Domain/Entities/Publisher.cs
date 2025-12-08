@@ -14,4 +14,9 @@ public class Publisher
     /// Название издательства
     /// </summary>
     public required string Name { get; set; }
+
+    /// <summary>
+    /// Список книг, связанных с издательством
+    /// </summary>
+    public virtual List<Book>? Books { get; set; } = new List<Book>();
 }

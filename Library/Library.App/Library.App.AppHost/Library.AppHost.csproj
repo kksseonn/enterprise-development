@@ -10,16 +10,17 @@
     <UserSecretsId>b7edfc0c-07f0-4c59-a244-b4a8e5ad48b3</UserSecretsId>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.5.2" />
-	<PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.5.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.AppHost" Version="9.5.2" />
+		<PackageReference Include="Aspire.Hosting.PostgreSQL" Version="9.5.2" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Library.Api\Library.Api.Host.csproj" />
-    <ProjectReference Include="..\..\Library.Application\Library.Application.csproj" />
-    <ProjectReference Include="..\..\Library.Domain\Library.Domain.csproj" />
-    <ProjectReference Include="..\..\Library.Infrastructure\Library.Infrastructure.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Library.Api\Library.Api.Host.csproj" />
+	  <ProjectReference Include="..\..\Library.Application\Library.Application.csproj" />
+	  <ProjectReference Include="..\..\Library.Domain\Library.Domain.csproj" />
+	  <ProjectReference Include="..\..\Library.Infrastructure\Library.Infrastructure.csproj" />
+	</ItemGroup>
+
 
 </Project>
