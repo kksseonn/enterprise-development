@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Host.Controllers;
 
+/// <summary>
+/// Контроллер для работы с читателями
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class ReaderController : ControllerBase
@@ -11,6 +14,11 @@ public class ReaderController : ControllerBase
     private readonly IApplicationCrudService<ReaderDto, ReaderDto, Guid> _crudService;
     private readonly ILogger<ReaderController> _logger;
 
+    /// <summary>
+    /// Конструктор контроллера ReaderController
+    /// </summary>
+    /// <param name="crudService">Сервис CRUD для работы с Reader</param>
+    /// <param name="logger">Логгер контроллера</param>
     public ReaderController(
         IApplicationCrudService<ReaderDto, ReaderDto, Guid> crudService,
         ILogger<ReaderController> logger)
@@ -19,7 +27,10 @@ public class ReaderController : ControllerBase
         _logger = logger;
     }
 
-
+    /// <summary>
+    /// Получить список всех читателей
+    /// </summary>
+    /// <returns>Список DTO читателей</returns>
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
@@ -32,6 +43,11 @@ public class ReaderController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Получить читателя по идентификатору
+    /// </summary>
+    /// <param name="id">Идентификатор читателя</param>
+    /// <returns>DTO читателя</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -52,7 +68,11 @@ public class ReaderController : ControllerBase
         });
     }
 
-
+    /// <summary>
+    /// Создать нового читателя
+    /// </summary>
+    /// <param name="dto">DTO читателя для создания</param>
+    /// <returns>Созданный DTO читателя</returns>
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
@@ -65,7 +85,12 @@ public class ReaderController : ControllerBase
         });
     }
 
-
+    /// <summary>
+    /// Обновить существующего читателя
+    /// </summary>
+    /// <param name="id">Идентификатор читателя</param>
+    /// <param name="dto">DTO с обновленными данными</param>
+    /// <returns>Обновленный DTO читателя</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -86,7 +111,11 @@ public class ReaderController : ControllerBase
         });
     }
 
-
+    /// <summary>
+    /// Удалить читателя по идентификатору
+    /// </summary>
+    /// <param name="id">Идентификатор читателя</param>
+    /// <returns>Статус выполнения операции</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
@@ -99,10 +128,16 @@ public class ReaderController : ControllerBase
         });
     }
 
-
+    /// <summary>
+    /// Вспомогательный метод для логирования и обработки исключений
+    /// </summary>
+    /// <param name="method">Имя метода контроллера</param>
+    /// <param name="action">Функция действия для выполнения</param>
+    /// <returns>ActionResult выполнения действия</returns>
     private async Task<ActionResult> ExecuteWithLogging(string method, Func<Task<ActionResult>> action)
     {
         _logger.LogInformation("{Method} of {Controller} was called", method, nameof(ReaderController));
+
         try
         {
             var result = await action();

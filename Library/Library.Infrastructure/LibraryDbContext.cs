@@ -4,24 +4,47 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-
 namespace Library.Infrastructure;
 
-public class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
-    : DbContext(options)
+/// <summary>
+/// Контекст базы данных библиотеки с настройкой сущностей и их связей
+/// </summary>
+public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbContext(options)
 {
-
+    /// <summary>
+    /// Типы изданий
+    /// </summary>
     public DbSet<EditionType> EditionTypes { get; set; }
+
+    /// <summary>
+    /// Издательства
+    /// </summary>
     public DbSet<Publisher> Publishers { get; set; }
+
+    /// <summary>
+    /// Читатели библиотеки
+    /// </summary>
     public DbSet<Reader> Readers { get; set; }
+
+    /// <summary>
+    /// Книги
+    /// </summary>
     public DbSet<Book> Books { get; set; }
+
+    /// <summary>
+    /// Выдачи книг
+    /// </summary>
     public DbSet<Borrow> Borrows { get; set; }
 
+    /// <summary>
+    /// Конфигурирует модели сущностей, их свойства, связи и начальные данные
+    /// </summary>
+    /// <param name="modelBuilder">Модель билдера</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var stringListConverter = new ValueConverter<List<string>, string>(
-                    v => string.Join(';', v),
-                    v => v.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList()
+            v => string.Join(';', v),
+            v => v.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList()
         );
 
         var stringListComparer = new ValueComparer<List<string>>(
@@ -30,10 +53,10 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
             l => l.ToList()
         );
 
-        var edition_types = LibraryData.SeedEditionTypes();
+        var editionTypes = LibraryData.SeedEditionTypes();
         var publishers = LibraryData.SeedPublishers();
         var readers = LibraryData.SeedReaders();
-        var books = LibraryData.SeedBooks(edition_types, publishers);
+        var books = LibraryData.SeedBooks(editionTypes, publishers);
         var borrows = LibraryData.SeedBorrows(books, readers);
 
         modelBuilder.Entity<EditionType>().ToTable("edition_type");
@@ -48,7 +71,7 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
                 .HasForeignKey(b => b.EditionTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasData(edition_types);
+            builder.HasData(editionTypes);
         });
 
         modelBuilder.Entity<Publisher>().ToTable("publisher");

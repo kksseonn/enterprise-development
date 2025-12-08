@@ -8,8 +8,8 @@ namespace Library.Tests;
 /// </summary>
 public class LibraryDomainTest(AnalyticsFixture fixture) : IClassFixture<AnalyticsFixture>
 {
-
     private readonly AnalyticsService _service = fixture.Service;
+
     /// <summary>
     /// Проверка активных выдач книг по названию
     /// </summary>
@@ -26,9 +26,10 @@ public class LibraryDomainTest(AnalyticsFixture fixture) : IClassFixture<Analyti
             Guid.Parse("d0000000-0000-0000-0000-000000000005"),
             Guid.Parse("d0000000-0000-0000-0000-000000000009"),
             Guid.Parse("d0000000-0000-0000-0000-000000000010"),
-            Guid.Parse("d0000000-0000-0000-0000-000000000003"),
+            Guid.Parse("d0000000-0000-0000-0000-000000000003")
         };
-        var resultIds = await  _service.GetBorrowedBooks_OrderedByBookTitle_ReturnsExpectedOrder();
+
+        var resultIds = await _service.GetBorrowedBooks_OrderedByBookTitle_ReturnsExpectedOrder();
 
         Assert.Equal(expectedIds, resultIds);
     }
@@ -42,7 +43,6 @@ public class LibraryDomainTest(AnalyticsFixture fixture) : IClassFixture<Analyti
         var startDate = new DateOnly(2024, 10, 31);
         var endDate = new DateOnly(2025, 10, 31);
 
-
         var expectedIds = new List<Guid>
         {
             Guid.Parse("c0000000-0000-0000-0000-000000000001"),
@@ -51,6 +51,7 @@ public class LibraryDomainTest(AnalyticsFixture fixture) : IClassFixture<Analyti
             Guid.Parse("c0000000-0000-0000-0000-000000000004"),
             Guid.Parse("c0000000-0000-0000-0000-000000000010")
         };
+
         var topReaders = await _service.GetTop5Readers_InPeriod_ReturnsCorrectReaders(startDate, endDate);
 
         Assert.Equal(expectedIds, topReaders);

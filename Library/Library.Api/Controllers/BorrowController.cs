@@ -5,6 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Library.Api.Host.Controllers;
 
+/// <summary>
+/// Контроллер для работы с выдачами книг (Borrow)
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class BorrowController : ControllerBase
@@ -12,6 +15,11 @@ public class BorrowController : ControllerBase
     private readonly IApplicationCrudService<BorrowDto, BorrowDto, Guid> _crudService;
     private readonly ILogger<BorrowController> _logger;
 
+    /// <summary>
+    /// Конструктор контроллера Borrow
+    /// </summary>
+    /// <param name="crudService">Сервис CRUD для Borrow</param>
+    /// <param name="logger">Логгер контроллера</param>
     public BorrowController(
         IApplicationCrudService<BorrowDto, BorrowDto, Guid> crudService,
         ILogger<BorrowController> logger)
@@ -20,6 +28,10 @@ public class BorrowController : ControllerBase
         _logger = logger;
     }
 
+    /// <summary>
+    /// Получить список всех выдач книг
+    /// </summary>
+    /// <returns>Список DTO Borrow</returns>
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
@@ -32,6 +44,11 @@ public class BorrowController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Получить выдачу книги по идентификатору
+    /// </summary>
+    /// <param name="id">Идентификатор выдачи</param>
+    /// <returns>DTO Borrow</returns>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -52,6 +69,11 @@ public class BorrowController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Создать новую выдачу книги
+    /// </summary>
+    /// <param name="dto">DTO создаваемой выдачи</param>
+    /// <returns>Созданный DTO Borrow</returns>
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
@@ -64,6 +86,12 @@ public class BorrowController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Обновить существующую выдачу книги
+    /// </summary>
+    /// <param name="id">Идентификатор выдачи</param>
+    /// <param name="dto">DTO с обновлёнными данными</param>
+    /// <returns>Обновлённый DTO Borrow</returns>
     [HttpPut("{id:guid}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -84,6 +112,11 @@ public class BorrowController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Удалить выдачу книги по идентификатору
+    /// </summary>
+    /// <param name="id">Идентификатор выдачи</param>
+    /// <returns>Статус выполнения операции</returns>
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
@@ -96,6 +129,12 @@ public class BorrowController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Вспомогательный метод для логирования и обработки исключений
+    /// </summary>
+    /// <param name="method">Имя метода контроллера</param>
+    /// <param name="action">Функция действия</param>
+    /// <returns>ActionResult выполнения действия</returns>
     private async Task<ActionResult> ExecuteWithLogging(string method, Func<Task<ActionResult>> action)
     {
         var controllerName = nameof(BorrowController);

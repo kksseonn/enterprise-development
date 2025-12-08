@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Host.Controllers;
 
+/// <summary>
+/// Контроллер для работы с типами изданий (EditionType)
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class EditionTypeController : ControllerBase
@@ -11,6 +14,11 @@ public class EditionTypeController : ControllerBase
     private readonly IApplicationCrudService<EditionTypeDto, EditionTypeDto, Guid> _crudService;
     private readonly ILogger<EditionTypeController> _logger;
 
+    /// <summary>
+    /// Конструктор контроллера EditionType
+    /// </summary>
+    /// <param name="crudService">Сервис CRUD для EditionType</param>
+    /// <param name="logger">Логгер контроллера</param>
     public EditionTypeController(
         IApplicationCrudService<EditionTypeDto, EditionTypeDto, Guid> crudService,
         ILogger<EditionTypeController> logger)
@@ -19,7 +27,10 @@ public class EditionTypeController : ControllerBase
         _logger = logger;
     }
 
-
+    /// <summary>
+    /// Получить список всех типов изданий
+    /// </summary>
+    /// <returns>Список DTO EditionType</returns>
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
@@ -32,6 +43,11 @@ public class EditionTypeController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Получить тип издания по идентификатору
+    /// </summary>
+    /// <param name="id">Идентификатор типа издания</param>
+    /// <returns>DTO EditionType</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -52,7 +68,11 @@ public class EditionTypeController : ControllerBase
         });
     }
 
-
+    /// <summary>
+    /// Создать новый тип издания
+    /// </summary>
+    /// <param name="dto">DTO создаваемого типа издания</param>
+    /// <returns>Созданный DTO EditionType</returns>
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
@@ -65,7 +85,12 @@ public class EditionTypeController : ControllerBase
         });
     }
 
-
+    /// <summary>
+    /// Обновить существующий тип издания
+    /// </summary>
+    /// <param name="id">Идентификатор типа издания</param>
+    /// <param name="dto">DTO с обновлёнными данными</param>
+    /// <returns>Обновлённый DTO EditionType</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -86,7 +111,11 @@ public class EditionTypeController : ControllerBase
         });
     }
 
-
+    /// <summary>
+    /// Удалить тип издания по идентификатору
+    /// </summary>
+    /// <param name="id">Идентификатор типа издания</param>
+    /// <returns>Статус выполнения операции</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
@@ -99,7 +128,12 @@ public class EditionTypeController : ControllerBase
         });
     }
 
-
+    /// <summary>
+    /// Вспомогательный метод для логирования и обработки исключений
+    /// </summary>
+    /// <param name="method">Имя метода контроллера</param>
+    /// <param name="action">Функция действия</param>
+    /// <returns>ActionResult выполнения действия</returns>
     private async Task<ActionResult> ExecuteWithLogging(string method, Func<Task<ActionResult>> action)
     {
         _logger.LogInformation("{Method} of {Controller} was called", method, nameof(EditionTypeController));

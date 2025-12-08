@@ -39,7 +39,6 @@ builder.Services.AddScoped<IApplicationCrudService<ReaderDto, ReaderDto, Guid>, 
 builder.Services.AddScoped<IApplicationCrudService<BookDto, BookDto, Guid>, BookService>();
 builder.Services.AddScoped<IApplicationCrudService<BorrowDto, BorrowDto, Guid>, BorrowService>();
 
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -59,8 +58,6 @@ builder.Services.AddSwaggerGen(c =>
 
 var connectionString = builder.Configuration.GetConnectionString("Database")
                        ?? "Host=localhost;Database=library;Username=postgres;Password=postgres";
-
-
 
 builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseNpgsql(connectionString)

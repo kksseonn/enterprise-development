@@ -5,6 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Library.Api.Host.Controllers;
 
+/// <summary>
+/// Контроллер для работы с книгами (Book)
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class BookController : ControllerBase
@@ -12,6 +15,11 @@ public class BookController : ControllerBase
     private readonly IApplicationCrudService<BookDto, BookDto, Guid> _crudService;
     private readonly ILogger<BookController> _logger;
 
+    /// <summary>
+    /// Конструктор контроллера Book
+    /// </summary>
+    /// <param name="crudService">Сервис CRUD для Book</param>
+    /// <param name="logger">Логгер контроллера</param>
     public BookController(
         IApplicationCrudService<BookDto, BookDto, Guid> crudService,
         ILogger<BookController> logger)
@@ -20,6 +28,10 @@ public class BookController : ControllerBase
         _logger = logger;
     }
 
+    /// <summary>
+    /// Получить список всех книг
+    /// </summary>
+    /// <returns>Список DTO книг</returns>
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
@@ -32,6 +44,11 @@ public class BookController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Получить книгу по идентификатору
+    /// </summary>
+    /// <param name="id">Идентификатор книги</param>
+    /// <returns>DTO книги</returns>
     [HttpGet("{id:guid}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -52,6 +69,11 @@ public class BookController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Создать новую книгу
+    /// </summary>
+    /// <param name="dto">DTO создаваемой книги</param>
+    /// <returns>Созданный DTO книги</returns>
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
@@ -64,6 +86,12 @@ public class BookController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Обновить существующую книгу
+    /// </summary>
+    /// <param name="id">Идентификатор книги</param>
+    /// <param name="dto">DTO с обновлёнными данными</param>
+    /// <returns>Обновлённый DTO книги</returns>
     [HttpPut("{id:guid}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -84,6 +112,11 @@ public class BookController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Удалить книгу по идентификатору
+    /// </summary>
+    /// <param name="id">Идентификатор книги</param>
+    /// <returns>Статус выполнения операции</returns>
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
@@ -96,6 +129,12 @@ public class BookController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Вспомогательный метод для логирования вызовов и обработки исключений
+    /// </summary>
+    /// <param name="method">Имя метода контроллера</param>
+    /// <param name="action">Функция действия</param>
+    /// <returns>ActionResult выполнения действия</returns>
     private async Task<ActionResult> ExecuteWithLogging(string method, Func<Task<ActionResult>> action)
     {
         var controllerName = nameof(BookController);

@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Host.Controllers;
 
+/// <summary>
+/// Контроллер для работы с издательствами (Publisher)
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class PublisherController : ControllerBase
@@ -11,6 +14,11 @@ public class PublisherController : ControllerBase
     private readonly IApplicationCrudService<PublisherDto, PublisherDto, Guid> _crudService;
     private readonly ILogger<PublisherController> _logger;
 
+    /// <summary>
+    /// Конструктор контроллера Publisher
+    /// </summary>
+    /// <param name="crudService">Сервис CRUD для издательств</param>
+    /// <param name="logger">Логгер контроллера</param>
     public PublisherController(
         IApplicationCrudService<PublisherDto, PublisherDto, Guid> crudService,
         ILogger<PublisherController> logger)
@@ -19,7 +27,10 @@ public class PublisherController : ControllerBase
         _logger = logger;
     }
 
-
+    /// <summary>
+    /// Получить список всех издательств
+    /// </summary>
+    /// <returns>Список DTO издательств</returns>
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
@@ -32,6 +43,11 @@ public class PublisherController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Получить издательство по идентификатору
+    /// </summary>
+    /// <param name="id">Идентификатор издательства</param>
+    /// <returns>DTO издательства</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -52,7 +68,11 @@ public class PublisherController : ControllerBase
         });
     }
 
-
+    /// <summary>
+    /// Создать новое издательство
+    /// </summary>
+    /// <param name="dto">DTO создаваемого издательства</param>
+    /// <returns>Созданный DTO издательства</returns>
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(400)]
@@ -65,7 +85,12 @@ public class PublisherController : ControllerBase
         });
     }
 
-
+    /// <summary>
+    /// Обновить существующее издательство
+    /// </summary>
+    /// <param name="id">Идентификатор издательства</param>
+    /// <param name="dto">DTO с обновлёнными данными</param>
+    /// <returns>Обновлённый DTO издателя</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -86,7 +111,11 @@ public class PublisherController : ControllerBase
         });
     }
 
-
+    /// <summary>
+    /// Удалить издательство по идентификатору
+    /// </summary>
+    /// <param name="id">Идентификатор издательства</param>
+    /// <returns>Статус выполнения операции</returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
@@ -99,7 +128,12 @@ public class PublisherController : ControllerBase
         });
     }
 
-
+    /// <summary>
+    /// Вспомогательный метод для логирования и обработки исключений
+    /// </summary>
+    /// <param name="method">Имя метода контроллера</param>
+    /// <param name="action">Функция действия</param>
+    /// <returns>ActionResult выполнения действия</returns>
     private async Task<ActionResult> ExecuteWithLogging(string method, Func<Task<ActionResult>> action)
     {
         _logger.LogInformation("{Method} of {Controller} was called", method, nameof(PublisherController));
