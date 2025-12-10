@@ -52,6 +52,8 @@ public class BorrowService(IRepository<Borrow> repository, IMapper mapper) : IBo
 
         entity.DueDate = entity.BorrowDate.AddDays(entity.Days);
 
+        entity.ReturnDate = null;
+
         var created = await repository.Create(entity, ct);
 
         var createdWithIncludes = await repository.Get(
@@ -81,15 +83,29 @@ public class BorrowService(IRepository<Borrow> repository, IMapper mapper) : IBo
         var existingEntity = await repository.Get(dtoId, ct)
             ?? throw new KeyNotFoundException($"Borrow record with ID {dtoId} not found");
 
+        if (dto.BorrowDate != existingEntity.BorrowDate)
+        {
+            throw new InvalidOperationException("Cannot modify the BorrowDate after the record has been created.");
+        }
+
         mapper.Map(dto, existingEntity);
 
         existingEntity.DueDate = existingEntity.BorrowDate.AddDays(existingEntity.Days);
 
         var updated = await repository.Update(existingEntity, ct);
 
-        return updated == null
-            ? throw new KeyNotFoundException($"Borrow record with ID {dtoId} not found during update")
-            : mapper.Map<BorrowDto>(updated);
+        if (updated == null)
+        {
+            throw new KeyNotFoundException($"Borrow record with ID {dtoId} not found during update");
+        }
+
+        var resultEntity = await repository.Get(
+            dtoId,
+            ct,
+            includes: [b => b.Book!, b => b.Reader!]
+        ) ?? throw new KeyNotFoundException($"Borrow record with ID {dtoId} not found after update");
+
+        return mapper.Map<BorrowDto>(resultEntity);
     }
 
     /// <summary>

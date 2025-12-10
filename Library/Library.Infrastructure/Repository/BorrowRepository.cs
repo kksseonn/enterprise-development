@@ -36,7 +36,7 @@ public class BorrowRepository(LibraryDbContext context) : IRepository<Borrow>
         params Expression<Func<Borrow, object>>[] includes
     )
     {
-        IQueryable<Borrow> query = context.Borrows.AsNoTracking();
+        IQueryable<Borrow> query = context.Borrows;
 
         query = query.Include(b => b.Book!).Include(b => b.Reader!);
 
@@ -70,18 +70,15 @@ public class BorrowRepository(LibraryDbContext context) : IRepository<Borrow>
     /// <returns>Обновленный объект <see cref="Borrow"/> или <see langword="null"/>, если сущность не найдена</returns>
     public async Task<Borrow?> Update(Borrow entity, CancellationToken ct = default)
     {
-        var exists = await context.Borrows.AnyAsync(e => e.Id == entity.Id, ct);
-
-        if (!exists)
+        try
+        {
+            await context.SaveChangesAsync(ct);
+            return entity;
+        }
+        catch (DbUpdateConcurrencyException)
         {
             return null;
         }
-
-        context.Borrows.Attach(entity).State = EntityState.Modified;
-
-        await context.SaveChangesAsync(ct);
-
-        return entity;
     }
 
     /// <summary>
