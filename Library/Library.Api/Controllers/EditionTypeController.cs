@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Library.Api.Host.Controllers;
 
 /// <summary>
-/// Контроллер для работы с типами изданий (EditionType)
+/// Контроллер для работы с типами изданий
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -14,7 +14,6 @@ public class EditionTypeController(
     ILogger<EditionTypeController> logger)
     : CrudControllerBase<EditionTypeDto, EditionTypeCrudDto, Guid>(service, logger)
 {
-
     /// <summary>
     /// Получить все книги для конкретного типа издания
     /// </summary>

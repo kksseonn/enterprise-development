@@ -6,11 +6,19 @@
 public interface IAnalyticsService
 {
     /// <summary>
-    /// Получает все выданные книги, отсортированные по названию
+    /// Получает все активные выданные книги, отсортированные по названию
     /// </summary>
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>Список идентификаторов книг</returns>
     public Task<List<Guid>> GetBorrowedBooks_OrderedByBookTitle_ReturnsExpectedOrder(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Получает пять наименее популярных книг за последний год
+    /// </summary>
+    /// <param name="today">Текущая дата</param>
+    /// <param name="cancellationToken">Токен отмены</param>
+    /// <returns>Список идентификаторов книг</returns>
+    public Task<List<Guid>> GetBottom5Books_InLastYear_ReturnsExpectedBooks(DateOnly today, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Получает пять самых активных читателей за указанный период
@@ -35,12 +43,4 @@ public interface IAnalyticsService
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>Список идентификаторов издательств</returns>
     public Task<List<Guid>> GetTop5Publishers_InLastYear_ReturnsExpectedList(DateOnly today, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Получает пять наименее популярных книг за последний год
-    /// </summary>
-    /// <param name="today">Текущая дата</param>
-    /// <param name="cancellationToken">Токен отмены</param>
-    /// <returns>Список идентификаторов книг</returns>
-    public Task<List<Guid>> GetBottom5Books_InLastYear_ReturnsExpectedBooks(DateOnly today, CancellationToken cancellationToken = default);
 }

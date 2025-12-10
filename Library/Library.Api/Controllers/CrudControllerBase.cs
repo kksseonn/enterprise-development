@@ -20,68 +20,12 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(
     where TKey : struct
 {
     /// <summary>
-    /// Создает новый объект
-    /// </summary>
-    [HttpPost]
-    [ProducesResponseType(201)]
-    [ProducesResponseType(400)]
-    public async Task<ActionResult<TDto>> Create([FromBody] TCreateUpdateDto newDto)
-        => await ExecuteWithLogging(nameof(Create), async () =>
-        {
-            try
-            {
-                var created = await appService.Create(newDto);
-                return CreatedAtAction(nameof(Create), created);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-           
-        });
-
-    /// <summary>
-    /// Обновляет объект по идентификатору
-    /// </summary>
-    [HttpPut("{id:guid}")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(404)]
-    [ProducesResponseType(400)]
-    public async Task<ActionResult<TDto>> Update(TKey id, [FromBody] TCreateUpdateDto newDto)
-        => await ExecuteWithLogging(nameof(Update), async () =>
-        {
-            try
-            {
-                var updated = await appService.Update(newDto, id);
-                return Ok(updated);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-        });
-
-    /// <summary>
-    /// Удаляет объект по идентификатору
-    /// </summary>
-    [HttpDelete("{id:guid}")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
-    [ProducesResponseType(500)]
-    public async Task<ActionResult> Delete(TKey id)
-        => await ExecuteWithLogging(nameof(Delete), async () =>
-        {
-            var deleted = await appService.Delete(id);
-            return deleted ? Ok() : NoContent();
-        });
-
-    /// <summary>
     /// Возвращает все объекты
     /// </summary>
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<IList<TDto>>> GetAll()
+    public async Task<ActionResult<IReadOnlyList<TDto>>> GetAll()
         => await ExecuteWithLogging(nameof(GetAll), async () =>
             Ok(await appService.GetAll()));
 
@@ -107,6 +51,64 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(
         });
 
     /// <summary>
+    /// Создает новый объект
+    /// </summary>
+    [HttpPost]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<TDto>> Create([FromBody] TCreateUpdateDto newDto)
+        => await ExecuteWithLogging(nameof(Create), async () =>
+        {
+            var created = await appService.Create(newDto);
+            return CreatedAtAction(nameof(Get), new { id = created.GetType().GetProperty("Id")?.GetValue(created) }, created);
+        });
+
+    /// <summary>
+    /// Обновляет объект по идентификатору
+    /// </summary>
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult<TDto>> Update(TKey id, [FromBody] TCreateUpdateDto newDto)
+        => await ExecuteWithLogging(nameof(Update), async () =>
+        {
+            try
+            {
+                var updated = await appService.Update(newDto, id);
+                return Ok(updated);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        });
+
+    /// <summary>
+    /// Удаляет объект по идентификатору
+    /// </summary>
+    [HttpDelete("{id:guid}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    [ProducesResponseType(500)]
+    public async Task<ActionResult> Delete(TKey id)
+        => await ExecuteWithLogging(nameof(Delete), async () =>
+        {
+            var deleted = await appService.Delete(id);
+
+            if (deleted)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return NotFound();
+            }
+        });
+
+    /// <summary>
     /// Выполняет действие с логированием и обработкой ошибок
     /// Версия для методов, возвращающих DTO
     /// </summary>
@@ -126,8 +128,7 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(
         {
             logger.LogError(ex, "Exception in {Method} of {Controller}", method, GetType().Name);
 
-            var errorResult = new ObjectResult($"{ex.Message}\n{ex.InnerException?.Message}") { StatusCode = 500 };
-            return new ActionResult<TResult>(errorResult);
+            return StatusCode(500, $"{ex.Message}\n{ex.InnerException?.Message}");
         }
     }
 
@@ -150,6 +151,7 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(
         catch (Exception ex)
         {
             logger.LogError(ex, "Exception in {Method} of {Controller}", method, GetType().Name);
+
             return StatusCode(500, $"{ex.Message}\n{ex.InnerException?.Message}");
         }
     }

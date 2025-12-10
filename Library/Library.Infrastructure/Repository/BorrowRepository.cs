@@ -7,47 +7,42 @@ namespace Library.Infrastructure.Repository;
 
 /// <summary>
 /// Репозиторий для работы с сущностью Borrow
+/// Реализует основные операции CRUD для сущности <see cref="Borrow"/>
 /// </summary>
 public class BorrowRepository(LibraryDbContext context) : IRepository<Borrow>
 {
-    private readonly LibraryDbContext _context = context;
-
     /// <summary>
-    /// Создает новую выдачу книги и сохраняет ее в базе данных
+    /// Получает все записи о выдачах книг
     /// </summary>
-    /// <param name="entity">Объект Borrow</param>
     /// <param name="ct">Токен отмены</param>
-    /// <returns>Созданный объект Borrow</returns>
-    public async Task<Borrow> Create(Borrow entity, CancellationToken ct = default)
-    {
-        var result = await _context.Borrows.AddAsync(entity, ct);
-        await _context.SaveChangesAsync(ct);
-        return result.Entity;
-    }
+    /// <returns>Список всех объектов <see cref="Borrow"/></returns>
+    public async Task<IReadOnlyList<Borrow>> GetAll(CancellationToken ct = default) =>
+        await context.Borrows
+            .AsNoTracking()
+            .Include(b => b.Book)
+            .Include(b => b.Reader)
+            .ToListAsync(ct);
 
     /// <summary>
-    /// Получает выдачу книги по идентификатору
+    /// Получает запись о выдаче книги по ее уникальному идентификатору
     /// </summary>
     /// <param name="id">Идентификатор выдачи</param>
     /// <param name="ct">Токен отмены</param>
-    /// <returns>Объект Borrow или null, если не найден</returns>
+    /// <param name="includes">Связанные сущности для дополнительного включения (Eager Loading)</param>
+    /// <returns>Объект <see cref="Borrow"/> или <see langword="null"/>, если не найден</returns>
     public async Task<Borrow?> Get(
         Guid id,
         CancellationToken ct = default,
         params Expression<Func<Borrow, object>>[] includes
     )
     {
-        IQueryable<Borrow> query = _context.Borrows
-            .AsNoTracking()
-            .Include(b => b.Book!)
-            .Include(b => b.Reader!);
+        IQueryable<Borrow> query = context.Borrows.AsNoTracking();
 
-        if (includes.Any())
+        query = query.Include(b => b.Book!).Include(b => b.Reader!);
+
+        if (includes.Length > 0)
         {
-            foreach (var include in includes)
-            {
-                query = query.Include(include);
-            }
+            query = includes.Aggregate(query, (current, include) => current.Include(include));
         }
 
         return await query
@@ -55,52 +50,58 @@ public class BorrowRepository(LibraryDbContext context) : IRepository<Borrow>
     }
 
     /// <summary>
-    /// Получает все выдачи книг
+    /// Создает новую запись о выдаче книги и сохраняет ее в базе данных
     /// </summary>
+    /// <param name="entity">Объект выдачи для создания</param>
     /// <param name="ct">Токен отмены</param>
-    /// <returns>Список всех объектов Borrow</returns>
-    public async Task<IReadOnlyList<Borrow>> GetAll(CancellationToken ct = default) =>
-        await _context.Borrows
-            .AsNoTracking()
-            .Include(b => b.Book)
-            .Include(b => b.Reader)
-            .ToListAsync(ct);
+    /// <returns>Созданный объект <see cref="Borrow"/></returns>
+    public async Task<Borrow> Create(Borrow entity, CancellationToken ct = default)
+    {
+        var result = await context.Borrows.AddAsync(entity, ct);
+        await context.SaveChangesAsync(ct);
+        return result.Entity;
+    }
 
     /// <summary>
-    /// Обновляет данные существующей выдачи книги
+    /// Обновляет данные существующей записи о выдаче книги
     /// </summary>
-    /// <param name="entity">Объект Borrow с обновленными данными</param>
+    /// <param name="entity">Объект <see cref="Borrow"/> с обновленными данными (должен содержать корректный Id)</param>
     /// <param name="ct">Токен отмены</param>
-    /// <returns>Обновленный объект Borrow или null, если не найден</returns>
+    /// <returns>Обновленный объект <see cref="Borrow"/> или <see langword="null"/>, если сущность не найдена</returns>
     public async Task<Borrow?> Update(Borrow entity, CancellationToken ct = default)
     {
-        var exists = await _context.Borrows.AnyAsync(e => e.Id == entity.Id, ct);
+        var exists = await context.Borrows.AnyAsync(e => e.Id == entity.Id, ct);
+
         if (!exists)
+        {
             return null;
+        }
 
-        _context.Borrows.Attach(entity).State = EntityState.Modified;
+        context.Borrows.Attach(entity).State = EntityState.Modified;
 
-        await _context.SaveChangesAsync(ct);
+        await context.SaveChangesAsync(ct);
 
         return entity;
     }
 
     /// <summary>
-    /// Удаляет выдачу книги по идентификатору
+    /// Удаляет запись о выдаче книги по ее уникальному идентификатору
     /// </summary>
-    /// <param name="id">Идентификатор выдачи</param>
+    /// <param name="id">Идентификатор выдачи для удаления</param>
     /// <param name="ct">Токен отмены</param>
-    /// <returns>true, если удаление прошло успешно, иначе false</returns>
+    /// <returns><see langword="true"/>, если удаление прошло успешно, иначе <see langword="false"/></returns>
     public async Task<bool> Delete(Guid id, CancellationToken ct = default)
     {
-        var entity = await _context.Borrows
+        var entity = await context.Borrows
             .FirstOrDefaultAsync(e => e.Id == id, ct);
 
         if (entity == null)
+        {
             return false;
+        }
 
-        _context.Borrows.Remove(entity);
-        await _context.SaveChangesAsync(ct);
+        context.Borrows.Remove(entity);
+        await context.SaveChangesAsync(ct);
         return true;
     }
 }

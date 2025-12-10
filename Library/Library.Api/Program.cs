@@ -57,7 +57,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var connectionString = builder.Configuration.GetConnectionString("LibraryDb")
-                       ?? "Server=localhost;Port=5432;Database=library;Username=postgres;Password=postgres";
+                         ?? "Server=localhost;Port=5432;Database=library;Username=postgres;Password=postgres";
 
 builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseNpgsql(connectionString)

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Library.Api.Host.Controllers;
 
 /// <summary>
-/// Контроллер для работы с книгами (Book)
+/// Контроллер для работы с книгами
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]

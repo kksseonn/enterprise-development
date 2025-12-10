@@ -9,8 +9,18 @@ namespace Library.Application.Service;
 /// <summary>
 /// Сервис для работы с читателями, реализует чтение и CRUD операции
 /// </summary>
-public class ReaderService(IRepository<Reader> _repository, IMapper _mapper) : IReaderCrudService
+public class ReaderService(IRepository<Reader> repository, IMapper mapper) : IReaderCrudService
 {
+    /// <summary>
+    /// Получает всех читателей
+    /// </summary>
+    /// <param name="ct">Токен отмены</param>
+    /// <returns>Список DTO читателей</returns>
+    public async Task<IReadOnlyList<ReaderDto>> GetAll(CancellationToken ct = default)
+    {
+        var entities = await repository.GetAll(ct);
+        return mapper.Map<List<ReaderDto>>(entities);
+    }
 
     /// <summary>
     /// Получает читателя по идентификатору
@@ -21,37 +31,26 @@ public class ReaderService(IRepository<Reader> _repository, IMapper _mapper) : I
     /// <exception cref="KeyNotFoundException">Если читатель не найден</exception>
     public async Task<ReaderDto> Get(Guid id, CancellationToken ct = default)
     {
-        var entity = await _repository.Get(id, ct)
+        var entity = await repository.Get(id, ct)
             ?? throw new KeyNotFoundException($"Reader with ID {id} not found");
 
-        return _mapper.Map<ReaderDto>(entity);
-    }
-
-    /// <summary>
-    /// Получает всех читателей
-    /// </summary>
-    /// <param name="ct">Токен отмены</param>
-    /// <returns>Список DTO читателей</returns>
-    public async Task<IReadOnlyList<ReaderDto>> GetAll(CancellationToken ct = default)
-    {
-        var entities = await _repository.GetAll(ct);
-        return _mapper.Map<List<ReaderDto>>(entities);
+        return mapper.Map<ReaderDto>(entity);
     }
 
     /// <summary>
     /// Создает нового читателя
     /// </summary>
-    /// <param name="dto">DTO читателя</param>
+    /// <param name="dto">DTO читателя для создания</param>
     /// <param name="ct">Токен отмены</param>
     /// <returns>Созданный DTO читателя</returns>
     public async Task<ReaderDto> Create(ReaderCrudDto dto, CancellationToken ct = default)
     {
-        var entity = _mapper.Map<Reader>(dto);
+        var entity = mapper.Map<Reader>(dto);
 
         entity.RegistrationDate = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        var created = await _repository.Create(entity, ct);
-        return _mapper.Map<ReaderDto>(created);
+        var created = await repository.Create(entity, ct);
+        return mapper.Map<ReaderDto>(created);
     }
 
     /// <summary>
@@ -64,17 +63,17 @@ public class ReaderService(IRepository<Reader> _repository, IMapper _mapper) : I
     /// <exception cref="KeyNotFoundException">Если читатель не найден</exception>
     public async Task<ReaderDto> Update(ReaderCrudDto dto, Guid dtoId, CancellationToken ct = default)
     {
-        var existingEntity = await _repository.Get(dtoId, ct)
+        var existingEntity = await repository.Get(dtoId, ct)
             ?? throw new KeyNotFoundException($"Reader with ID {dtoId} not found");
 
-        _mapper.Map(dto, existingEntity);
+        mapper.Map(dto, existingEntity);
 
-        var updated = await _repository.Update(existingEntity, ct);
+        var updated = await repository.Update(existingEntity, ct);
 
         if (updated == null)
-            throw new KeyNotFoundException($"Reader with ID {dtoId} not found after update");
+            throw new KeyNotFoundException($"Reader with ID {dtoId} not found during update");
 
-        return _mapper.Map<ReaderDto>(updated!);
+        return mapper.Map<ReaderDto>(updated);
     }
 
     /// <summary>
@@ -82,20 +81,27 @@ public class ReaderService(IRepository<Reader> _repository, IMapper _mapper) : I
     /// </summary>
     /// <param name="dtoId">Идентификатор читателя</param>
     /// <param name="ct">Токен отмены</param>
-    /// <returns>true, если удаление прошло успешно, иначе false</returns>
+    /// <returns><see langword="true"/>, если удаление прошло успешно, иначе <see langword="false"/></returns>
     public async Task<bool> Delete(Guid dtoId, CancellationToken ct = default)
     {
-        return await _repository.Delete(dtoId, ct);
+        return await repository.Delete(dtoId, ct);
     }
 
+    /// <summary>
+    /// Получает все записи о выдачах книг для конкретного читателя
+    /// </summary>
+    /// <param name="readerId">Идентификатор читателя</param>
+    /// <param name="ct">Токен отмены</param>
+    /// <returns>Список DTO записей о выдачах</returns>
+    /// <exception cref="KeyNotFoundException">Если читатель не найден</exception>
     public async Task<IReadOnlyList<BorrowDto>> GetBorrows(Guid readerId, CancellationToken ct = default)
     {
-        var entity = await _repository.Get(
+        var entity = await repository.Get(
             readerId,
             ct,
             includes: r => r.Borrows!
-        ) ?? throw new KeyNotFoundException($"Entity with ID {readerId} not found");
+        ) ?? throw new KeyNotFoundException($"Reader with ID {readerId} not found");
 
-        return _mapper.Map<List<BorrowDto>>(entity.Borrows!);
+        return mapper.Map<List<BorrowDto>>(entity.Borrows!);
     }
 }

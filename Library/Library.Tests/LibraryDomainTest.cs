@@ -11,7 +11,7 @@ public class LibraryDomainTest(AnalyticsFixture fixture) : IClassFixture<Analyti
     private readonly AnalyticsService _service = fixture.Service;
 
     /// <summary>
-    /// Проверка активных выдач книг по названию
+    /// Проверка активных выдач книг, отсортированных по названию книги
     /// </summary>
     [Fact]
     public async void GetBorrowedBooks_OrderedByBookTitle_ReturnsExpectedOrder()
@@ -35,6 +35,24 @@ public class LibraryDomainTest(AnalyticsFixture fixture) : IClassFixture<Analyti
     }
 
     /// <summary>
+    /// Проверка выборки читателей, бравших книги на наибольший суммарный период времени
+    /// </summary>
+    [Fact]
+    public async void GetReaders_ByLongestTotalBorrowDays_ReturnsSortedByFullName()
+    {
+        var expectedIds = new List<Guid>
+        {
+            Guid.Parse("c0000000-0000-0000-0000-000000000001"),
+            Guid.Parse("c0000000-0000-0000-0000-000000000002"),
+            Guid.Parse("c0000000-0000-0000-0000-000000000008")
+        };
+
+        var readersByLongest = await _service.GetReaders_ByLongestTotalBorrowDays_ReturnsSortedByFullName();
+
+        Assert.Equal(expectedIds, readersByLongest);
+    }
+
+    /// <summary>
     /// Проверка, что возвращается пять самых активных читателей за указанный период
     /// </summary>
     [Fact]
@@ -55,24 +73,6 @@ public class LibraryDomainTest(AnalyticsFixture fixture) : IClassFixture<Analyti
         var topReaders = await _service.GetTop5Readers_InPeriod_ReturnsCorrectReaders(startDate, endDate);
 
         Assert.Equal(expectedIds, topReaders);
-    }
-
-    /// <summary>
-    /// Проверка выборки читателей, бравших книги на наибольший период времени
-    /// </summary>
-    [Fact]
-    public async void GetReaders_ByLongestTotalBorrowDays_ReturnsSortedByFullName()
-    {
-        var expectedIds = new List<Guid>
-        {
-            Guid.Parse("c0000000-0000-0000-0000-000000000001"),
-            Guid.Parse("c0000000-0000-0000-0000-000000000002"),
-            Guid.Parse("c0000000-0000-0000-0000-000000000008")
-        };
-
-        var readersByLongest = await _service.GetReaders_ByLongestTotalBorrowDays_ReturnsSortedByFullName();
-
-        Assert.Equal(expectedIds, readersByLongest);
     }
 
     /// <summary>

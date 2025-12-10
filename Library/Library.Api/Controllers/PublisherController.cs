@@ -5,21 +5,20 @@ using Microsoft.AspNetCore.Mvc;
 namespace Library.Api.Host.Controllers;
 
 /// <summary>
-/// Контроллер для работы с издательствами (Publisher)
+/// Контроллер для работы с издательствами
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-
 public class PublisherController(
     IPublisherCrudService service,
-    ILogger<PublisherController> logger) 
+    ILogger<PublisherController> logger)
     : CrudControllerBase<PublisherDto, PublisherCrudDto, Guid>(service, logger)
 {
     /// <summary>
-    /// Получить все книги для конкретного издателя
+    /// Получить все книги для конкретного издательства
     /// </summary>
-    /// <param name="id">Идентификатор издателя</param>
-    /// <returns>Список DTO книг издателя</returns>
+    /// <param name="id">Идентификатор издательства</param>
+    /// <returns>Список DTO книг издательства</returns>
     [HttpGet("{id}/Books")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
@@ -37,5 +36,4 @@ public class PublisherController(
                 return NotFound();
             }
         });
- 
 }

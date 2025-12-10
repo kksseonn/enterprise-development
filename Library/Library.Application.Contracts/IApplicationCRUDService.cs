@@ -1,11 +1,13 @@
-﻿namespace Library.Application.Contracts;
+﻿using Library.Application.Contracts;
+
+namespace Library.Application.Contracts;
 
 /// <summary>
 /// Интерфейс для сервисов CRUD операций приложения
 /// </summary>
-/// <typeparam name="TDto">Тип DTO для чтения</typeparam>
-/// <typeparam name="TCreateUpdateDto">Тип DTO для создания и обновления</typeparam>
-/// <typeparam name="TKey">Тип ключа</typeparam>
+/// <typeparam name="TDto">Тип DTO для чтения (Read)</typeparam>
+/// <typeparam name="TCreateUpdateDto">Тип DTO для создания и обновления (Create/Update)</typeparam>
+/// <typeparam name="TKey">Тип ключа (идентификатора)</typeparam>
 public interface IApplicationCrudService<TDto, TCreateUpdateDto, TKey>
     : IApplicationReadService<TDto, TKey>
     where TDto : class
@@ -34,6 +36,6 @@ public interface IApplicationCrudService<TDto, TCreateUpdateDto, TKey>
     /// </summary>
     /// <param name="dtoId">Идентификатор сущности</param>
     /// <param name="ct">Токен отмены</param>
-    /// <returns>true, если удаление прошло успешно, иначе false</returns>
+    /// <returns><see langword="true"/>, если удаление прошло успешно, иначе <see langword="false"/></returns>
     public Task<bool> Delete(TKey dtoId, CancellationToken ct = default);
 }

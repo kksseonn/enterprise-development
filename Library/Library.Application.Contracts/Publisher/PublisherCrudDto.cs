@@ -1,3 +1,7 @@
 ﻿namespace Library.Application.Contracts.Publisher;
-public record PublisherCrudDto(string Name);
 
+/// <summary>
+/// DTO для создания и обновления данных об издательстве
+/// </summary>
+/// <param name="Name">Название издательства</param>
+public record PublisherCrudDto(string Name);

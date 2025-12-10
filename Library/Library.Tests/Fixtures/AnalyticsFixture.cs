@@ -1,7 +1,8 @@
-﻿using Library.Application.Service;
+﻿using Moq;
+
+using Library.Application.Service;
 using Library.Domain;
 using Library.Domain.Entities;
-using Moq;
 
 namespace Library.Tests.Fixtures;
 
@@ -56,8 +57,7 @@ public class AnalyticsFixture
         Service = new AnalyticsService(
             borrowRepositoryMock.Object,
             bookRepositoryMock.Object,
-            readerRepositoryMock.Object,
-            publisherRepositoryMock.Object
+            readerRepositoryMock.Object
         );
     }
 }

@@ -1,8 +1,9 @@
-﻿using Library.Domain.Data;
-using Library.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
+using Library.Domain.Data;
+using Library.Domain.Entities;
 
 namespace Library.Infrastructure;
 
@@ -122,10 +123,9 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
                 .HasMaxLength(100);
 
             builder.Property(r => r.Authors)
-                .HasConversion(stringListConverter)
+                .HasConversion(stringListConverter, stringListComparer)
                 .IsRequired()
-                .HasMaxLength(250)
-                .Metadata.SetValueComparer(stringListComparer);
+                .HasMaxLength(250);
 
             builder.Property(r => r.EditionTypeId)
                 .IsRequired();
