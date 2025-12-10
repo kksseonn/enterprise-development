@@ -71,9 +71,13 @@ public class BookService(IRepository<Book> repository, IMapper mapper) : IBookCr
 
         var updated = await repository.Update(existingEntity, ct);
 
-        return updated == null
-            ? throw new KeyNotFoundException($"Book with ID {dtoId} not found during update")
-            : mapper.Map<BookDto>(updated);
+        var resultEntity = await repository.Get(
+            dtoId,
+            ct,
+            includes: [b => b.Publisher!, b => b.EditionType!]
+        ) ?? throw new KeyNotFoundException($"Book with ID {dtoId} not found after update");
+
+        return mapper.Map<BookDto>(resultEntity);
     }
 
     /// <summary>

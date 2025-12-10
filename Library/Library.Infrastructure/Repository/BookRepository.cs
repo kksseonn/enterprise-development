@@ -71,18 +71,15 @@ public class BookRepository(LibraryDbContext context) : IRepository<Book>
     /// <returns>Обновленный объект <see cref="Book"/> или <see langword="null"/>, если сущность не найдена</returns>
     public async Task<Book?> Update(Book entity, CancellationToken ct = default)
     {
-        var exists = await context.Books.AnyAsync(e => e.Id == entity.Id, ct);
-
-        if (!exists)
+        try
+        {
+            await context.SaveChangesAsync(ct);
+            return entity;
+        }
+        catch (DbUpdateConcurrencyException)
         {
             return null;
         }
-
-        context.Books.Attach(entity).State = EntityState.Modified;
-
-        await context.SaveChangesAsync(ct);
-
-        return entity;
     }
 
     /// <summary>
