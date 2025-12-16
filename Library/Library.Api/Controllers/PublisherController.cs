@@ -23,17 +23,26 @@ public class PublisherController(
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<IReadOnlyList<BookDto>>> GetBooks(Guid id) =>
-        await ExecuteWithLogging(nameof(GetBooks), async () =>
+    public async Task<ActionResult<IReadOnlyList<BookDto>>> GetBooks(Guid id)
+    {
+        const string methodName = nameof(GetBooks);
+        logger.LogInformation("{Method} of {Controller} was called for Publisher ID: {Id}", methodName, GetType().Name, id);
+
+        try
         {
-            try
-            {
-                var result = await service.GetBooks(id);
-                return Ok(result);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-        });
+            var result = await service.GetBooks(id);
+            logger.LogInformation("{Method} of {Controller} executed successfully. Books found: {Count}", methodName, GetType().Name, result.Count);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException)
+        {
+            logger.LogWarning("{Method} of {Controller}: Publisher with ID {Id} not found.", methodName, GetType().Name, id);
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Exception in {Method} of {Controller} for Publisher ID: {Id}", methodName, GetType().Name, id);
+            return StatusCode(500, $"{ex.Message}\n{ex.InnerException?.Message}");
+        }
+    }
 }

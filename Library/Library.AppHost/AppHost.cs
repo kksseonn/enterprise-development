@@ -8,7 +8,7 @@ var libraryDb = builder
     .AddDatabase(dbName);
 
 builder.AddProject<Projects.Library_Api_Host>("library-api-host")
-    .WithReference(libraryDb, "Database")
+    .WithReference(libraryDb, "LibraryDb")
     .WaitFor(libraryDb);
 
 builder.Build().Run();

@@ -26,8 +26,22 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
     public async Task<ActionResult<IReadOnlyList<TDto>>> GetAll()
-        => await ExecuteWithLogging(nameof(GetAll), async () =>
-            Ok(await appService.GetAll()));
+    {
+        const string methodName = nameof(GetAll);
+        logger.LogInformation("{Method} of {Controller} was called", methodName, GetType().Name);
+
+        try
+        {
+            var result = await appService.GetAll();
+            logger.LogInformation("{Method} of {Controller} executed successfully", methodName, GetType().Name);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Exception in {Method} of {Controller}", methodName, GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n{ex.InnerException?.Message}");
+        }
+    }
 
     /// <summary>
     /// Возвращает объект по идентификатору
@@ -37,18 +51,27 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     public async Task<ActionResult<TDto>> Get(TKey id)
-        => await ExecuteWithLogging(nameof(Get), async () =>
+    {
+        const string methodName = nameof(Get);
+        logger.LogInformation("{Method} of {Controller} was called with ID: {Id}", methodName, GetType().Name, id);
+
+        try
         {
-            try
-            {
-                var result = await appService.Get(id);
-                return Ok(result);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-        });
+            var result = await appService.Get(id);
+            logger.LogInformation("{Method} of {Controller} executed successfully", methodName, GetType().Name);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException)
+        {
+            logger.LogWarning("{Method} of {Controller}: Item with ID {Id} not found", methodName, GetType().Name, id);
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Exception in {Method} of {Controller}", methodName, GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n{ex.InnerException?.Message}");
+        }
+    }
 
     /// <summary>
     /// Создает новый объект
@@ -58,11 +81,23 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
     public async Task<ActionResult<TDto>> Create([FromBody] TCreateUpdateDto newDto)
-        => await ExecuteWithLogging(nameof(Create), async () =>
+    {
+        const string methodName = nameof(Create);
+        logger.LogInformation("{Method} of {Controller} was called", methodName, GetType().Name);
+
+        try
         {
             var created = await appService.Create(newDto);
+            logger.LogInformation("{Method} of {Controller} executed successfully. Created ID: {Id}", methodName, GetType().Name, created.GetType().GetProperty("Id")?.GetValue(created));
+
             return CreatedAtAction(nameof(Get), new { id = created.GetType().GetProperty("Id")?.GetValue(created) }, created);
-        });
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Exception in {Method} of {Controller}", methodName, GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n{ex.InnerException?.Message}");
+        }
+    }
 
     /// <summary>
     /// Обновляет объект по идентификатору
@@ -73,18 +108,27 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(
     [ProducesResponseType(400)]
     [ProducesResponseType(500)]
     public async Task<ActionResult<TDto>> Update(TKey id, [FromBody] TCreateUpdateDto newDto)
-        => await ExecuteWithLogging(nameof(Update), async () =>
+    {
+        const string methodName = nameof(Update);
+        logger.LogInformation("{Method} of {Controller} was called with ID: {Id}", methodName, GetType().Name, id);
+
+        try
         {
-            try
-            {
-                var updated = await appService.Update(newDto, id);
-                return Ok(updated);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-        });
+            var updated = await appService.Update(newDto, id);
+            logger.LogInformation("{Method} of {Controller} executed successfully", methodName, GetType().Name);
+            return Ok(updated);
+        }
+        catch (KeyNotFoundException)
+        {
+            logger.LogWarning("{Method} of {Controller}: Item with ID {Id} not found for update", methodName, GetType().Name, id);
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Exception in {Method} of {Controller}", methodName, GetType().Name);
+            return StatusCode(500, $"{ex.Message}\n{ex.InnerException?.Message}");
+        }
+    }
 
     /// <summary>
     /// Удаляет объект по идентификатору
@@ -94,64 +138,28 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     public async Task<ActionResult> Delete(TKey id)
-        => await ExecuteWithLogging(nameof(Delete), async () =>
+    {
+        const string methodName = nameof(Delete);
+        logger.LogInformation("{Method} of {Controller} was called with ID: {Id}", methodName, GetType().Name, id);
+
+        try
         {
             var deleted = await appService.Delete(id);
 
             if (deleted)
             {
+                logger.LogInformation("{Method} of {Controller} executed successfully. Item deleted.", methodName, GetType().Name);
                 return NoContent();
             }
             else
             {
+                logger.LogWarning("{Method} of {Controller}: Item with ID {Id} not found for deletion", methodName, GetType().Name, id);
                 return NotFound();
             }
-        });
-
-    /// <summary>
-    /// Выполняет действие с логированием и обработкой ошибок
-    /// Версия для методов, возвращающих DTO
-    /// </summary>
-    protected async Task<ActionResult<TResult>> ExecuteWithLogging<TResult>(
-        string method,
-        Func<Task<ActionResult<TResult>>> action)
-    {
-        logger.LogInformation("{Method} of {Controller} was called", method, GetType().Name);
-
-        try
-        {
-            var result = await action();
-            logger.LogInformation("{Method} of {Controller} executed successfully", method, GetType().Name);
-            return result;
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Exception in {Method} of {Controller}", method, GetType().Name);
-
-            return StatusCode(500, $"{ex.Message}\n{ex.InnerException?.Message}");
-        }
-    }
-
-    /// <summary>
-    /// Выполняет действие с логированием и обработкой ошибок
-    /// Версия для методов, возвращающих только ActionResult
-    /// </summary>
-    protected async Task<ActionResult> ExecuteWithLogging(
-        string method,
-        Func<Task<ActionResult>> action)
-    {
-        logger.LogInformation("{Method} of {Controller} was called", method, GetType().Name);
-
-        try
-        {
-            var result = await action();
-            logger.LogInformation("{Method} of {Controller} executed successfully", method, GetType().Name);
-            return result;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Exception in {Method} of {Controller}", method, GetType().Name);
-
+            logger.LogError(ex, "Exception in {Method} of {Controller}", methodName, GetType().Name);
             return StatusCode(500, $"{ex.Message}\n{ex.InnerException?.Message}");
         }
     }

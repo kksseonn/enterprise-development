@@ -60,7 +60,6 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
         var books = LibraryData.SeedBooks(editionTypes, publishers);
         var borrows = LibraryData.SeedBorrows(books, readers);
 
-        modelBuilder.Entity<EditionType>().ToTable("edition_type");
         modelBuilder.Entity<EditionType>(builder =>
         {
             builder.Property(r => r.Type)
@@ -70,7 +69,6 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
             builder.HasData(editionTypes);
         });
 
-        modelBuilder.Entity<Publisher>().ToTable("publisher");
         modelBuilder.Entity<Publisher>(builder =>
         {
             builder.Property(r => r.Name)
@@ -80,7 +78,6 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
             builder.HasData(publishers);
         });
 
-        modelBuilder.Entity<Reader>().ToTable("reader");
         modelBuilder.Entity<Reader>(builder =>
         {
             builder.Property(r => r.Surname)
@@ -108,7 +105,6 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
             builder.HasData(readers);
         });
 
-        modelBuilder.Entity<Book>().ToTable("book");
         modelBuilder.Entity<Book>(builder =>
         {
             builder.Property(r => r.InventoryNumber)
@@ -139,7 +135,6 @@ public class LibraryDbContext(DbContextOptions<LibraryDbContext> options) : DbCo
             builder.HasData(books);
         });
 
-        modelBuilder.Entity<Borrow>().ToTable("borrow");
         modelBuilder.Entity<Borrow>(builder =>
         {
             builder.HasKey(b => b.Id);

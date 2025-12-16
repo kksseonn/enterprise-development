@@ -14,108 +14,108 @@ namespace Library.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "edition_type",
+                name: "edition_types",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Type = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    type = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_edition_type", x => x.Id);
+                    table.PrimaryKey("PK_edition_types", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "publisher",
+                name: "publishers",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_publisher", x => x.Id);
+                    table.PrimaryKey("PK_publishers", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "reader",
+                name: "readers",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Surname = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Patronymic = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    Address = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
-                    Phone = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    RegistrationDate = table.Column<DateOnly>(type: "date", nullable: false)
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    surname = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    patronymic = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    address = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    phone = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    registration_date = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_reader", x => x.Id);
+                    table.PrimaryKey("PK_readers", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "book",
+                name: "books",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    InventoryNumber = table.Column<int>(type: "integer", nullable: false),
-                    CatalogCode = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Authors = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
-                    EditionTypeId = table.Column<Guid>(type: "uuid", nullable: false),
-                    PublisherId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Year = table.Column<int>(type: "integer", nullable: false)
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    inventory_number = table.Column<int>(type: "integer", nullable: false),
+                    catalog_code = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    authors = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
+                    edition_type_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    publisher_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    year = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_book", x => x.Id);
+                    table.PrimaryKey("PK_books", x => x.id);
                     table.ForeignKey(
-                        name: "FK_book_edition_type_EditionTypeId",
-                        column: x => x.EditionTypeId,
-                        principalTable: "edition_type",
-                        principalColumn: "Id",
+                        name: "FK_books_edition_types_edition_type_id",
+                        column: x => x.edition_type_id,
+                        principalTable: "edition_types",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_book_publisher_PublisherId",
-                        column: x => x.PublisherId,
-                        principalTable: "publisher",
-                        principalColumn: "Id",
+                        name: "FK_books_publishers_publisher_id",
+                        column: x => x.publisher_id,
+                        principalTable: "publishers",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "borrow",
+                name: "borrows",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    BookId = table.Column<Guid>(type: "uuid", nullable: false),
-                    ReaderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    BorrowDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    Days = table.Column<int>(type: "integer", nullable: false),
-                    DueDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    ReturnDate = table.Column<DateOnly>(type: "date", nullable: true)
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    book_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    reader_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    borrow_date = table.Column<DateOnly>(type: "date", nullable: false),
+                    days = table.Column<int>(type: "integer", nullable: false),
+                    due_date = table.Column<DateOnly>(type: "date", nullable: false),
+                    return_date = table.Column<DateOnly>(type: "date", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_borrow", x => x.Id);
+                    table.PrimaryKey("PK_borrows", x => x.id);
                     table.ForeignKey(
-                        name: "FK_borrow_book_BookId",
-                        column: x => x.BookId,
-                        principalTable: "book",
-                        principalColumn: "Id",
+                        name: "FK_borrows_books_book_id",
+                        column: x => x.book_id,
+                        principalTable: "books",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_borrow_reader_ReaderId",
-                        column: x => x.ReaderId,
-                        principalTable: "reader",
-                        principalColumn: "Id",
+                        name: "FK_borrows_readers_reader_id",
+                        column: x => x.reader_id,
+                        principalTable: "readers",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
-                table: "edition_type",
-                columns: new[] { "Id", "Type" },
+                table: "edition_types",
+                columns: new[] { "id", "type" },
                 values: new object[,]
                 {
                     { new Guid("a0000000-0000-0000-0000-000000000001"), "Учебник" },
@@ -131,8 +131,8 @@ namespace Library.Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "publisher",
-                columns: new[] { "Id", "Name" },
+                table: "publishers",
+                columns: new[] { "id", "name" },
                 values: new object[,]
                 {
                     { new Guid("b0000000-0000-0000-0000-000000000001"), "Эксмо" },
@@ -148,8 +148,8 @@ namespace Library.Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "reader",
-                columns: new[] { "Id", "Address", "Name", "Patronymic", "Phone", "RegistrationDate", "Surname" },
+                table: "readers",
+                columns: new[] { "id", "address", "name", "patronymic", "phone", "registration_date", "surname" },
                 values: new object[,]
                 {
                     { new Guid("c0000000-0000-0000-0000-000000000001"), "ул. Ленина, 1", "Иван", "Иванович", "+79001234567", new DateOnly(2023, 12, 3), "Иванов" },
@@ -165,8 +165,8 @@ namespace Library.Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "book",
-                columns: new[] { "Id", "Authors", "CatalogCode", "EditionTypeId", "InventoryNumber", "PublisherId", "Title", "Year" },
+                table: "books",
+                columns: new[] { "id", "authors", "catalog_code", "edition_type_id", "inventory_number", "publisher_id", "title", "year" },
                 values: new object[,]
                 {
                     { new Guid("d0000000-0000-0000-0000-000000000001"), "Л.Н. Толстой", "A-01", new Guid("a0000000-0000-0000-0000-000000000004"), 1001, new Guid("b0000000-0000-0000-0000-000000000001"), "Война и мир", 1869 },
@@ -192,8 +192,8 @@ namespace Library.Infrastructure.Migrations
                 });
 
             migrationBuilder.InsertData(
-                table: "borrow",
-                columns: new[] { "Id", "BookId", "BorrowDate", "Days", "DueDate", "ReaderId", "ReturnDate" },
+                table: "borrows",
+                columns: new[] { "id", "book_id", "borrow_date", "days", "due_date", "reader_id", "return_date" },
                 values: new object[,]
                 {
                     { new Guid("e0000000-0000-0000-0000-000000000001"), new Guid("d0000000-0000-0000-0000-000000000001"), new DateOnly(2024, 1, 10), 14, new DateOnly(1, 1, 1), new Guid("c0000000-0000-0000-0000-000000000001"), new DateOnly(2024, 1, 24) },
@@ -218,43 +218,43 @@ namespace Library.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_book_EditionTypeId",
-                table: "book",
-                column: "EditionTypeId");
+                name: "IX_books_edition_type_id",
+                table: "books",
+                column: "edition_type_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_book_PublisherId",
-                table: "book",
-                column: "PublisherId");
+                name: "IX_books_publisher_id",
+                table: "books",
+                column: "publisher_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_borrow_BookId",
-                table: "borrow",
-                column: "BookId");
+                name: "IX_borrows_book_id",
+                table: "borrows",
+                column: "book_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_borrow_ReaderId",
-                table: "borrow",
-                column: "ReaderId");
+                name: "IX_borrows_reader_id",
+                table: "borrows",
+                column: "reader_id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "borrow");
+                name: "borrows");
 
             migrationBuilder.DropTable(
-                name: "book");
+                name: "books");
 
             migrationBuilder.DropTable(
-                name: "reader");
+                name: "readers");
 
             migrationBuilder.DropTable(
-                name: "edition_type");
+                name: "edition_types");
 
             migrationBuilder.DropTable(
-                name: "publisher");
+                name: "publishers");
         }
     }
 }

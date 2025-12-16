@@ -29,34 +29,42 @@ namespace Library.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Authors")
                         .IsRequired()
                         .HasMaxLength(250)
-                        .HasColumnType("character varying(250)");
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("authors");
 
                     b.Property<string>("CatalogCode")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("catalog_code");
 
                     b.Property<Guid>("EditionTypeId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("edition_type_id");
 
                     b.Property<int>("InventoryNumber")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("inventory_number");
 
                     b.Property<Guid>("PublisherId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("publisher_id");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("title");
 
                     b.Property<int>("Year")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("year");
 
                     b.HasKey("Id");
 
@@ -64,7 +72,7 @@ namespace Library.Infrastructure.Migrations
 
                     b.HasIndex("PublisherId");
 
-                    b.ToTable("book", (string)null);
+                    b.ToTable("books");
 
                     b.HasData(
                         new
@@ -293,25 +301,32 @@ namespace Library.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<Guid>("BookId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("book_id");
 
                     b.Property<DateOnly>("BorrowDate")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("borrow_date");
 
                     b.Property<int>("Days")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("days");
 
                     b.Property<DateOnly>("DueDate")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("due_date");
 
                     b.Property<Guid>("ReaderId")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("reader_id");
 
                     b.Property<DateOnly?>("ReturnDate")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("return_date");
 
                     b.HasKey("Id");
 
@@ -319,7 +334,7 @@ namespace Library.Infrastructure.Migrations
 
                     b.HasIndex("ReaderId");
 
-                    b.ToTable("borrow", (string)null);
+                    b.ToTable("borrows");
 
                     b.HasData(
                         new
@@ -509,16 +524,18 @@ namespace Library.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("type");
 
                     b.HasKey("Id");
 
-                    b.ToTable("edition_type", (string)null);
+                    b.ToTable("edition_types");
 
                     b.HasData(
                         new
@@ -577,16 +594,18 @@ namespace Library.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
 
                     b.HasKey("Id");
 
-                    b.ToTable("publisher", (string)null);
+                    b.ToTable("publishers");
 
                     b.HasData(
                         new
@@ -645,38 +664,45 @@ namespace Library.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasMaxLength(250)
-                        .HasColumnType("character varying(250)");
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("address");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
 
                     b.Property<string>("Patronymic")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("patronymic");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("phone");
 
                     b.Property<DateOnly>("RegistrationDate")
-                        .HasColumnType("date");
+                        .HasColumnType("date")
+                        .HasColumnName("registration_date");
 
                     b.Property<string>("Surname")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("surname");
 
                     b.HasKey("Id");
 
-                    b.ToTable("reader", (string)null);
+                    b.ToTable("readers");
 
                     b.HasData(
                         new

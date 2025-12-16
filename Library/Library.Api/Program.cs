@@ -1,3 +1,4 @@
+using Library.Application.Contracts;
 using Library.Application.Contracts.Book;
 using Library.Application.Contracts.Borrow;
 using Library.Application.Contracts.EditionType;
@@ -6,7 +7,6 @@ using Library.Application.Contracts.Reader;
 using Library.Application.Mapper;
 using Library.Application.Service;
 using Library.Domain;
-using Library.Domain.Data;
 using Library.Domain.Entities;
 using Library.Infrastructure;
 using Library.Infrastructure.Repository;
@@ -25,8 +25,6 @@ config.Scan(typeof(MappingRegister).Assembly);
 builder.Services.AddSingleton(config);
 builder.Services.AddScoped<IMapper, ServiceMapper>();
 
-builder.Services.AddSingleton<LibraryData>();
-
 builder.Services.AddScoped<IRepository<EditionType>, EditionTypeRepository>();
 builder.Services.AddScoped<IRepository<Publisher>, PublisherRepository>();
 builder.Services.AddScoped<IRepository<Reader>, ReaderRepository>();
@@ -38,6 +36,7 @@ builder.Services.AddScoped<IPublisherCrudService, PublisherService>();
 builder.Services.AddScoped<IReaderCrudService, ReaderService>();
 builder.Services.AddScoped<IBookCrudService, BookService>();
 builder.Services.AddScoped<IBorrowCrudService, BorrowService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -56,15 +55,11 @@ builder.Services.AddSwaggerGen(c =>
     }
 });
 
-var connectionString = builder.Configuration.GetConnectionString("LibraryDb")
-                         ?? "Server=localhost;Port=5432;Database=library;Username=postgres;Password=postgres";
-
-builder.Services.AddDbContext<LibraryDbContext>(options =>
-    options.UseNpgsql(connectionString)
-           .UseLazyLoadingProxies()
-);
+builder.AddNpgsqlDbContext<LibraryDbContext>("LibraryDb", configureDbContextOptions: builder => builder.UseLazyLoadingProxies());
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 using (var scope = app.Services.CreateScope())
 {

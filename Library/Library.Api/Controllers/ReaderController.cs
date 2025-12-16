@@ -23,17 +23,26 @@ public class ReaderController(
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
-    public async Task<ActionResult<IReadOnlyList<BorrowDto>>> GetBorrows(Guid id) =>
-        await ExecuteWithLogging(nameof(GetBorrows), async () =>
+    public async Task<ActionResult<IReadOnlyList<BorrowDto>>> GetBorrows(Guid id)
+    {
+        const string methodName = nameof(GetBorrows);
+        logger.LogInformation("{Method} of {Controller} was called for Reader ID: {Id}", methodName, GetType().Name, id);
+
+        try
         {
-            try
-            {
-                var result = await service.GetBorrows(id);
-                return Ok(result);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
-        });
+            var result = await service.GetBorrows(id);
+            logger.LogInformation("{Method} of {Controller} executed successfully. Borrows found: {Count}", methodName, GetType().Name, result.Count);
+            return Ok(result);
+        }
+        catch (KeyNotFoundException)
+        {
+            logger.LogWarning("{Method} of {Controller}: Reader with ID {Id} not found.", methodName, GetType().Name, id);
+            return NotFound();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Exception in {Method} of {Controller} for Reader ID: {Id}", methodName, GetType().Name, id);
+            return StatusCode(500, $"{ex.Message}\n{ex.InnerException?.Message}");
+        }
+    }
 }
