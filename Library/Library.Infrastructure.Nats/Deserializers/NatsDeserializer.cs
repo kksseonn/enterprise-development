@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace Library.Infrastructure.Nats.Deserializers;
 
-public static class NatsPayloadDeserializer
+public static class NatsDeserializer
 {
     private static readonly JsonSerializerOptions _options = new()
     {

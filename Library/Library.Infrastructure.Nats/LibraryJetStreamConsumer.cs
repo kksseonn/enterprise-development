@@ -62,7 +62,7 @@ public abstract class LibraryJetStreamConsumer<TDto, TCrudDto, TKey>(
 
                 await foreach (var msg in consumer.ConsumeAsync<byte[]>(cancellationToken: stoppingToken))
                 {
-                    var batch = NatsPayloadDeserializer.Deserialize<TCrudDto>(
+                    var batch = NatsDeserializer.Deserialize<TCrudDto>(
                         new ReadOnlySequence<byte>(msg.Data!)
                     );
 
