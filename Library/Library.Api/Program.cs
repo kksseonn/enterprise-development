@@ -1,3 +1,4 @@
+using Library.Api.Host.BackgroundServices;
 using Library.Application.Contracts;
 using Library.Application.Contracts.Book;
 using Library.Application.Contracts.Borrow;
@@ -9,6 +10,7 @@ using Library.Application.Service;
 using Library.Domain;
 using Library.Domain.Entities;
 using Library.Infrastructure;
+using Library.Infrastructure.Nats.Options;
 using Library.Infrastructure.Repository;
 using Library.ServiceDefaults;
 using Mapster;
@@ -37,6 +39,11 @@ builder.Services.AddScoped<IReaderCrudService, ReaderService>();
 builder.Services.AddScoped<IBookCrudService, BookService>();
 builder.Services.AddScoped<IBorrowCrudService, BorrowService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+
+builder.Services.Configure<NatsOptions>(
+    builder.Configuration.GetSection(NatsOptions.SectionName));
+builder.AddNatsClient("nats-broker");
+builder.Services.AddHostedService<BorrowNatsConsumer>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
