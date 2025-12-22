@@ -1,5 +1,6 @@
+using Library.Generator.Nats.Host;
+using Library.Generator.Nats.Host.Interfaces;
 using Library.Generator.Nats.Host.Services;
-using Library.Infrastructure.Nats;
 using Library.Infrastructure.Nats.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,8 +10,7 @@ builder.Services.Configure<NatsOptions>(
 
 builder.AddNatsClient("nats-broker");
 
-builder.Services.AddSingleton<LibraryJetStreamProducer>();
-
+builder.Services.AddSingleton<IProducerService, LibraryNatsProducer>();
 builder.Services.AddScoped<IBorrowsGenerator, BorrowsGenerator>();
 
 builder.Services.AddControllers();

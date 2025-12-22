@@ -1,15 +1,17 @@
 ﻿using Bogus;
 using Library.Application.Contracts.Borrow;
-using Library.Infrastructure.Nats;
-using Microsoft.Extensions.Logging;
+using Library.Generator.Nats.Host.Interfaces;
 
 namespace Library.Generator.Nats.Host.Services;
 
-public class BorrowsGenerator : IBorrowsGenerator
+/// <summary>
+/// Генератор тестовых карточек Borrow и отправка их в NATS
+/// </summary>
+public sealed class BorrowsGenerator(
+    IProducerService producer,
+    ILogger<BorrowsGenerator> logger)
+    : IBorrowsGenerator
 {
-    private readonly LibraryJetStreamProducer _producer;
-    private readonly ILogger<BorrowsGenerator> _logger;
-
     private static readonly Guid[] _validBookIds =
     {
         Guid.Parse("d0000000-0000-0000-0000-000000000001"),
@@ -28,28 +30,21 @@ public class BorrowsGenerator : IBorrowsGenerator
         Guid.Parse("c0000000-0000-0000-0000-000000000005")
     };
 
-    public BorrowsGenerator(
-        LibraryJetStreamProducer producer,
-        ILogger<BorrowsGenerator> logger)
-    {
-        _producer = producer;
-        _logger = logger;
-    }
-
-    public async Task GenerateAsync(
-        int batchSize,
-        int batchesCount,
-        CancellationToken cancellationToken = default)
+    /// <summary>
+    /// Генерирует заданное количество батчей Borrow и публикует их в NATS
+    /// </summary>
+    /// <param name="batchSize">Количество элементов в одном батче</param>
+    /// <param name="batchesCount">Количество батчей</param>
+    /// <param name="cancellationToken">Токен отмены</param>
+    public async Task GenerateAsync(int batchSize, int batchesCount, CancellationToken cancellationToken = default)
     {
         var faker = new Faker<BorrowCrudDto>()
             .CustomInstantiator(f => new BorrowCrudDto(
-                f.PickRandom(_validBookIds),             
-                f.PickRandom(_validReaderIds),           
-                DateOnly.FromDateTime(DateTime.UtcNow),  
-                14,                                      
-                null                                     
-            ));
-
+                f.PickRandom(_validBookIds),
+                f.PickRandom(_validReaderIds),
+                DateOnly.FromDateTime(DateTime.UtcNow),
+                14,
+                null));
 
         for (var i = 0; i < batchesCount; i++)
         {
@@ -57,11 +52,14 @@ public class BorrowsGenerator : IBorrowsGenerator
 
             var batch = faker.Generate(batchSize);
 
-            await _producer.PublishBatchWithRetryAsync(batch, cancellationToken);
+            await producer.PublishBatchAsync(batch, cancellationToken)
+                .ConfigureAwait(false);
 
-            _logger.LogInformation(
-                "Отправлен батч {Current}/{Total} ({Size} эл.)",
-                i + 1, batchesCount, batchSize);
+            logger.LogInformation(
+                "Сгенерирован и отправлен батч {Current}/{Total} ({Size} эл.)",
+                i + 1,
+                batchesCount,
+                batchSize);
         }
     }
 }

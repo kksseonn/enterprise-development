@@ -3,6 +3,9 @@ using System.Text.Json;
 
 namespace Library.Infrastructure.Nats.Deserializers;
 
+/// <summary>
+/// Десериализатор данных, полученных из NATS
+/// </summary>
 public static class NatsDeserializer
 {
     private static readonly JsonSerializerOptions _options = new()
@@ -10,6 +13,12 @@ public static class NatsDeserializer
         PropertyNameCaseInsensitive = true
     };
 
+    /// <summary>
+    /// Десериализует массив байт в список объектов указанного типа
+    /// </summary>
+    /// <typeparam name="T">Тип десериализуемых объектов</typeparam>
+    /// <param name="sequence">Сегмент байт для десериализации</param>
+    /// <returns>Список объектов или null при ошибке</returns>
     public static IList<T>? Deserialize<T>(ReadOnlySequence<byte> sequence)
     {
         if (sequence.IsEmpty)

@@ -22,9 +22,10 @@ builder.AddProject<Projects.Library_Api_Host>("library-api-host")
     .WithEnvironment("Nats__StreamName", streamName)
     .WithEnvironment("Nats__SubjectName", subjectName);
 
-builder.AddContainer("nats-ui", "natsio/nats-ui")
-    .WithHttpEndpoint(port: 8222, targetPort: 80)
-    .WithReference(nats);
+builder.AddContainer("nats-ui", "ghcr.io/nats-nui/nui")
+    .WithReference(nats)
+    .WaitFor(nats)
+    .WithHttpEndpoint(port: 31311, targetPort: 31311);
 
 builder.AddProject<Projects.Library_Generator_Nats_Host>("library-generator-nats-host")
     .WithReference(nats)

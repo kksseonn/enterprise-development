@@ -5,7 +5,10 @@ using NATS.Client.Core;
 
 namespace Library.Api.Host.BackgroundServices;
 
-public class BorrowNatsConsumer(
+/// <summary>
+/// Фоновый сервис для чтения сообщений Borrow из NATS JetStream и сохранения в базу данных
+/// </summary>
+public sealed class BorrowNatsConsumer(
     INatsConnection connection,
     IServiceScopeFactory scopeFactory,
     ILogger<BorrowNatsConsumer> logger,
