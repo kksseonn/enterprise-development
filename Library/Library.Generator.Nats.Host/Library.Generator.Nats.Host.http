@@ -1,6 +1,0 @@
-@Library.Generator.Nats.Host_HostAddress = http://localhost:5031
-
-GET {{Library.Generator.Nats.Host_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
