@@ -40,9 +40,15 @@ builder.Services.AddScoped<IBookCrudService, BookService>();
 builder.Services.AddScoped<IBorrowCrudService, BorrowService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
+builder.Services.AddScoped<
+    IApplicationCrudService<BorrowDto, BorrowCrudDto, Guid>,
+    BorrowService>();
+
+
 builder.Services.Configure<NatsOptions>(
     builder.Configuration.GetSection(NatsOptions.SectionName));
 builder.AddNatsClient("nats-broker");
+
 builder.Services.AddHostedService<BorrowNatsConsumer>();
 
 builder.Services.AddControllers();
@@ -62,11 +68,11 @@ builder.Services.AddSwaggerGen(c =>
     }
 });
 
-builder.AddNpgsqlDbContext<LibraryDbContext>("LibraryDb", configureDbContextOptions: builder => builder.UseLazyLoadingProxies());
+builder.AddNpgsqlDbContext<LibraryDbContext>(
+    "LibraryDb",
+    configureDbContextOptions: builder => builder.UseLazyLoadingProxies());
 
 var app = builder.Build();
-
-app.MapDefaultEndpoints();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -82,7 +88,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthorization();
-
 app.MapControllers();
+
+app.MapDefaultEndpoints();
 
 app.Run();

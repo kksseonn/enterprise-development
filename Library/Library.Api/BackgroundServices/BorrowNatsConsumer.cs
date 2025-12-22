@@ -1,5 +1,4 @@
 ﻿using Library.Application.Contracts.Borrow;
-using Library.Infrastructure.Nats;
 using Library.Infrastructure.Nats.Options;
 using Microsoft.Extensions.Options;
 using NATS.Client.Core;

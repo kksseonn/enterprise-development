@@ -26,4 +26,9 @@ builder.AddContainer("nats-ui", "natsio/nats-ui")
     .WithHttpEndpoint(port: 8222, targetPort: 80)
     .WithReference(nats);
 
+builder.AddProject<Projects.Library_Generator_Nats_Host>("library-generator-nats-host")
+    .WithReference(nats)
+    .WithEnvironment("Nats__StreamName", streamName)
+    .WithEnvironment("Nats__SubjectName", subjectName);
+
 builder.Build().Run();

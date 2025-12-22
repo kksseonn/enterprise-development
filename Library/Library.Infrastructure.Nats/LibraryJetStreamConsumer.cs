@@ -30,17 +30,10 @@ public abstract class LibraryJetStreamConsumer<TDto, TCrudDto, TKey>(
             try
             {
                 logger.LogInformation(
-                    "NATS Consumer {ConsumerName} is connecting to JetStream...",
+                    "NATS Consumer {ConsumerName} connecting to JetStream...",
                     consumerName);
 
                 var js = connection.CreateJetStreamContext();
-
-                await js.CreateOrUpdateStreamAsync(
-                    new StreamConfig(
-                        name: _options.StreamName,
-                        subjects: [_options.SubjectName]
-                    ),
-                    stoppingToken);
 
                 var consumer = await js.CreateOrUpdateConsumerAsync(
                     _options.StreamName,
@@ -48,9 +41,11 @@ public abstract class LibraryJetStreamConsumer<TDto, TCrudDto, TKey>(
                     {
                         Name = consumerName,
                         DurableName = consumerName,
+
                         AckPolicy = ConsumerConfigAckPolicy.Explicit,
                         AckWait = TimeSpan.FromSeconds(30),
-                        MaxAckPending = 1000
+                        MaxAckPending = 1000,
+                        FilterSubject = _options.SubjectName
                     },
                     stoppingToken);
 
@@ -62,49 +57,64 @@ public abstract class LibraryJetStreamConsumer<TDto, TCrudDto, TKey>(
 
                 await foreach (var msg in consumer.ConsumeAsync<byte[]>(cancellationToken: stoppingToken))
                 {
-                    var batch = NatsDeserializer.Deserialize<TCrudDto>(
-                        new ReadOnlySequence<byte>(msg.Data!)
-                    );
-
-                    if (batch is null || batch.Count == 0)
+                    try
                     {
-                        logger.LogError(
-                            "Invalid or empty batch received in {ConsumerName}. Message skipped.",
-                            consumerName);
+                        logger.LogInformation(
+                            "Message received from NATS. Size={Size} bytes",
+                            msg.Data?.Length ?? 0);
 
-                        await msg.AckAsync(cancellationToken: stoppingToken);
-                        continue;
-                    }
-
-                    var processedSuccessfully = true;
-
-                    using var scope = scopeFactory.CreateScope();
-                    var service = scope.ServiceProvider
-                        .GetRequiredService<IApplicationCrudService<TDto, TCrudDto, TKey>>();
-
-                    foreach (var item in batch)
-                    {
-                        try
+                        if (msg.Data is null || msg.Data.Length == 0)
                         {
-                            await service.Create(item, stoppingToken);
+                            await msg.AckAsync(cancellationToken: stoppingToken);
+                            continue;
                         }
-                        catch (Exception ex)
-                        {
-                            processedSuccessfully = false;
 
-                            logger.LogError(
-                                ex,
-                                "Failed to process item in {ConsumerName}",
+                        var batch = NatsDeserializer.Deserialize<TCrudDto>(
+                            new ReadOnlySequence<byte>(msg.Data));
+
+                        if (batch is null || batch.Count == 0)
+                        {
+                            logger.LogWarning(
+                                "Empty or invalid batch received in {ConsumerName}. Message skipped.",
                                 consumerName);
 
-                            break;
+                            await msg.AckAsync(cancellationToken: stoppingToken);
+                            continue;
                         }
-                    }
 
-                    if (processedSuccessfully)
+                        logger.LogInformation(
+                            "Batch deserialized: {Count} items",
+                            batch.Count);
+
+                        using var scope = scopeFactory.CreateScope();
+                        var service = scope.ServiceProvider
+                            .GetRequiredService<IApplicationCrudService<TDto, TCrudDto, TKey>>();
+
+                        foreach (var item in batch)
+                        {
+                            try
+                            {
+                                await service.Create(item, stoppingToken);
+                            }
+                            catch (Exception ex)
+                            {
+                                logger.LogWarning(
+                                    ex,
+                                    "Invalid data skipped in {ConsumerName}",
+                                    consumerName);
+                            }
+                        }
                         await msg.AckAsync(cancellationToken: stoppingToken);
-                    else
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(
+                            ex,
+                            "Technical failure while processing message in {ConsumerName}",
+                            consumerName);
+
                         await msg.NakAsync(cancellationToken: stoppingToken);
+                    }
                 }
             }
             catch (OperationCanceledException)
@@ -115,7 +125,7 @@ public abstract class LibraryJetStreamConsumer<TDto, TCrudDto, TKey>(
             {
                 logger.LogError(
                     ex,
-                    "NATS error in {ConsumerName}. Retrying in 5 seconds...",
+                    "NATS consumer {ConsumerName} error. Retrying in 5 seconds...",
                     consumerName);
 
                 try

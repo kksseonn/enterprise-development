@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.AppHost", "Library.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Infrastructure.Nats", "Library.Infrastructure.Nats\Library.Infrastructure.Nats.csproj", "{287C413B-E150-474D-9478-8DFAC79ED435}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Generator.Nats.Host", "Library.Generator.Nats.Host\Library.Generator.Nats.Host.csproj", "{17D46CF2-E481-6B39-B734-59F98CA767A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{287C413B-E150-474D-9478-8DFAC79ED435}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{287C413B-E150-474D-9478-8DFAC79ED435}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{287C413B-E150-474D-9478-8DFAC79ED435}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17D46CF2-E481-6B39-B734-59F98CA767A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17D46CF2-E481-6B39-B734-59F98CA767A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17D46CF2-E481-6B39-B734-59F98CA767A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17D46CF2-E481-6B39-B734-59F98CA767A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

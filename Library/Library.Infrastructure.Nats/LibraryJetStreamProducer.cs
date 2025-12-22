@@ -12,24 +12,24 @@ public class LibraryJetStreamProducer(
     IOptions<NatsOptions> options,
     ILogger<LibraryJetStreamProducer> logger)
 {
-    private readonly NatsOptions _options = options.Value;
-    private readonly ILogger _logger = logger;
-
     public async Task PublishBatchWithRetryAsync<T>(
         IEnumerable<T> data,
         CancellationToken ct = default,
         int maxRetries = 3,
         int initialDelayMs = 500)
     {
-        if (data is null || !data.Any())
+        var natsOptions = options.Value;
+
+        var dataList = data?.ToList();
+
+        if (dataList is null || dataList.Count == 0)
         {
-            _logger.LogWarning("Попытка отправить пустой батч в subject {Subject} проигнорирована.", _options.SubjectName);
+            logger.LogWarning("Попытка отправить пустой батч в subject {Subject} проигнорирована.", natsOptions.SubjectName);
             return;
         }
 
         var js = connection.CreateJetStreamContext();
-
-        var payload = NatsSerializer.Serialize(data);
+        var payload = NatsSerializer.Serialize(dataList);
 
         var attempt = 0;
         var delayMs = initialDelayMs;
@@ -40,13 +40,13 @@ public class LibraryJetStreamProducer(
             try
             {
                 await js.PublishAsync(
-                    subject: _options.SubjectName,
+                    subject: natsOptions.SubjectName,
                     data: payload,
                     cancellationToken: ct);
 
-                _logger.LogInformation(
+                logger.LogInformation(
                     "Успешно отправлен батч ({Count} эл.) в {Subject}. Попытка: {Attempt}",
-                    data.Count(), _options.SubjectName, attempt);
+                    dataList.Count, natsOptions.SubjectName, attempt);
 
                 break;
             }
@@ -54,12 +54,12 @@ public class LibraryJetStreamProducer(
             {
                 if (attempt >= maxRetries)
                 {
-                    _logger.LogError(ex, "Превышено число попыток ({Max}) отправки в {Subject}.", maxRetries, _options.SubjectName);
+                    logger.LogError(ex, "Превышено число попыток ({Max}) отправки в {Subject}.", maxRetries, natsOptions.SubjectName);
                     throw;
                 }
 
-                _logger.LogWarning("Ошибка публикации в {Subject}. Повтор через {Delay}мс... ({Attempt}/{Max})",
-                    _options.SubjectName, delayMs, attempt, maxRetries);
+                logger.LogWarning("Ошибка публикации в {Subject}. Повтор через {Delay}мс... ({Attempt}/{Max})",
+                    natsOptions.SubjectName, delayMs, attempt, maxRetries);
 
                 await Task.Delay(delayMs, ct);
                 delayMs *= 2;
