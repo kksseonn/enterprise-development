@@ -6,20 +6,10 @@ namespace Library.Generator.Nats.Host.Controllers;
 /// <summary>
 /// Контроллер для генерации тестовых карточек Borrow и отправки их в NATS JetStream
 /// </summary>
+[Route("api/[controller]")]
 [ApiController]
-[Route("api/generator")]
-public sealed class GeneratorController : ControllerBase
+public sealed class GeneratorController(IBorrowsGenerator generator) : ControllerBase
 {
-    private readonly IBorrowsGenerator _generator;
-
-    /// <summary>
-    /// Конструктор контроллера
-    /// </summary>
-    /// <param name="generator">Сервис генерации Borrow</param>
-    public GeneratorController(IBorrowsGenerator generator)
-    {
-        _generator = generator;
-    }
 
     /// <summary>
     /// Генерация тестовых карточек Borrow и отправка их батчами в NATS JetStream
@@ -28,7 +18,10 @@ public sealed class GeneratorController : ControllerBase
     /// <param name="batchesCount">Количество батчей</param>
     /// <param name="cancellationToken">Токен отмены</param>
     /// <returns>Результат выполнения операции</returns>
-    [HttpPost("borrows")]
+    [HttpPost]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(500)]
     public async Task<IActionResult> GenerateBorrows(
         [FromQuery] int batchSize = 10,
         [FromQuery] int batchesCount = 1,
@@ -39,7 +32,7 @@ public sealed class GeneratorController : ControllerBase
             return BadRequest("batchSize и batchesCount должны быть больше 0");
         }
 
-        await _generator.GenerateAsync(batchSize, batchesCount, cancellationToken);
+        await generator.GenerateAsync(batchSize, batchesCount, cancellationToken);
 
         return Ok(new
         {

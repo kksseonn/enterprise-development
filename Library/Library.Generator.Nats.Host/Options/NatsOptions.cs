@@ -1,4 +1,4 @@
-﻿namespace Library.Infrastructure.Nats.Options;
+﻿namespace Library.Generator.Nats.Host.Options;
 
 /// <summary>
 /// Настройки подключения к NATS и JetStream
@@ -19,6 +19,4 @@ public class NatsOptions
     /// Имя subject для публикации/подписки
     /// </summary>
     public required string SubjectName { get; init; }
-
-    public required string ConsumerName { get; init; }
 }

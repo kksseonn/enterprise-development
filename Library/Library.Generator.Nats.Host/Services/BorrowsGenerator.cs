@@ -1,6 +1,5 @@
 ﻿using Bogus;
 using Library.Application.Contracts.Borrow;
-using Library.Generator.Nats.Host.Interfaces;
 
 namespace Library.Generator.Nats.Host.Services;
 
@@ -8,7 +7,7 @@ namespace Library.Generator.Nats.Host.Services;
 /// Генератор тестовых карточек Borrow и отправка их в NATS
 /// </summary>
 public sealed class BorrowsGenerator(
-    IProducerService producer,
+    BorrowNatsProducer producer,
     ILogger<BorrowsGenerator> logger)
     : IBorrowsGenerator
 {
@@ -50,16 +49,32 @@ public sealed class BorrowsGenerator(
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var batch = faker.Generate(batchSize);
-
-            await producer.PublishBatchAsync(batch, cancellationToken)
-                .ConfigureAwait(false);
-
             logger.LogInformation(
-                "Сгенерирован и отправлен батч {Current}/{Total} ({Size} эл.)",
+                "Generating batch {Current}/{Total} (Size: {Size})...",
                 i + 1,
                 batchesCount,
                 batchSize);
+
+            var batch = faker.Generate(batchSize);
+
+            try
+            {
+                await producer.PublishBatchAsync(batch, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error while sending batch {Current}/{Total}", i + 1, batchesCount);
+                throw;
+            }
+
+            logger.LogInformation(
+                "Batch {Current}/{Total} sent successfully ({Size} items)",
+                i + 1,
+                batchesCount,
+                batchSize);
+
+            await Task.Delay(500, cancellationToken);
         }
     }
 }

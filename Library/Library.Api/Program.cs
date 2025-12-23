@@ -1,4 +1,3 @@
-using Library.Api.Host.BackgroundServices;
 using Library.Application.Contracts;
 using Library.Application.Contracts.Book;
 using Library.Application.Contracts.Borrow;
@@ -40,16 +39,11 @@ builder.Services.AddScoped<IBookCrudService, BookService>();
 builder.Services.AddScoped<IBorrowCrudService, BorrowService>();
 builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
-builder.Services.AddScoped<
-    IApplicationCrudService<BorrowDto, BorrowCrudDto, Guid>,
-    BorrowService>();
-
+builder.Services.AddHostedService<BorrowNatsConsumer>();
 
 builder.Services.Configure<NatsOptions>(
     builder.Configuration.GetSection(NatsOptions.SectionName));
 builder.AddNatsClient("nats-broker");
-
-builder.Services.AddHostedService<BorrowNatsConsumer>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
