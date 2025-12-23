@@ -6,11 +6,11 @@ namespace Library.Generator.Nats.Host.Controllers;
 /// <summary>
 /// Контроллер для генерации тестовых карточек Borrow и отправки их в NATS JetStream
 /// </summary>
+/// <param name="generator">Сервис генерации тестовых данных</param>
 [Route("api/[controller]")]
 [ApiController]
 public sealed class GeneratorController(IBorrowsGenerator generator) : ControllerBase
 {
-
     /// <summary>
     /// Генерация тестовых карточек Borrow и отправка их батчами в NATS JetStream
     /// </summary>

@@ -1,4 +1,4 @@
-﻿using Library.Application.Contracts;
+﻿using System.Buffers;
 using Library.Application.Contracts.Borrow;
 using Library.Infrastructure.Nats.Deserializers;
 using Library.Infrastructure.Nats.Options;
@@ -9,13 +9,13 @@ using Microsoft.Extensions.Options;
 using NATS.Client.Core;
 using NATS.Client.JetStream.Models;
 using NATS.Net;
-using System.Buffers;
 
 /// <summary>
-/// Служба для чтения данных из сабжекта Nats при помощи push-консьюмера
+/// Служба для чтения данных из сабжекта NATS при помощи Push-консьюмера
 /// </summary>
-/// <param name="connection">Подключение к Nats</param>
-/// <param name="scopeFactory">Фабрика контекста</param>
+/// <param name="connection">Подключение к NATS</param>
+/// <param name="scopeFactory">Фабрика контекста для создания Scope</param>
+/// <param name="options">Настройки конфигурации NATS</param>
 /// <param name="logger">Логгер</param>
 public sealed class BorrowNatsConsumer(
     INatsConnection connection,
@@ -26,6 +26,11 @@ public sealed class BorrowNatsConsumer(
 {
     private readonly NatsOptions _options = options.Value;
 
+    /// <summary>
+    /// Основной цикл выполнения фоновой службы
+    /// </summary>
+    /// <param name="stoppingToken">Токен отмены операции</param>
+    /// <returns>Задача, представляющая выполнение службы</returns>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)

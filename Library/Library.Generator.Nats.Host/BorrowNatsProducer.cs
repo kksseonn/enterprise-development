@@ -1,16 +1,19 @@
-﻿using Library.Application.Contracts.Borrow;
+﻿using System.Text.Json;
+using Library.Application.Contracts.Borrow;
 using Library.Infrastructure.Nats.Options;
 using Microsoft.Extensions.Options;
 using NATS.Client.Core;
 using NATS.Client.JetStream.Models;
 using NATS.Net;
-using System.Text.Json;
 
 namespace Library.Generator.Nats.Host;
 
 /// <summary>
 /// Сервис для публикации батчей данных в NATS JetStream с повторными попытками при ошибках
 /// </summary>
+/// <param name="connection">Подключение к NATS</param>
+/// <param name="options">Настройки конфигурации NATS</param>
+/// <param name="logger">Логгер</param>
 public sealed class BorrowNatsProducer(
     INatsConnection connection,
     IOptions<NatsOptions> options,

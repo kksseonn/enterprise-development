@@ -20,5 +20,8 @@ public class NatsOptions
     /// </summary>
     public required string SubjectName { get; init; }
 
+    /// <summary>
+    /// Имя консьюмера в JetStream
+    /// </summary>
     public required string ConsumerName { get; init; }
 }

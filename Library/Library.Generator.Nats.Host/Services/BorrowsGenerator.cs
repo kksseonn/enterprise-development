@@ -6,6 +6,8 @@ namespace Library.Generator.Nats.Host.Services;
 /// <summary>
 /// Генератор тестовых карточек Borrow и отправка их в NATS
 /// </summary>
+/// <param name="producer">Продюсер для публикации данных в NATS</param>
+/// <param name="logger">Интерфейс логирования</param>
 public sealed class BorrowsGenerator(
     BorrowNatsProducer producer,
     ILogger<BorrowsGenerator> logger)
@@ -35,6 +37,7 @@ public sealed class BorrowsGenerator(
     /// <param name="batchSize">Количество элементов в одном батче</param>
     /// <param name="batchesCount">Количество батчей</param>
     /// <param name="cancellationToken">Токен отмены</param>
+    /// <returns>Задача выполнения операции</returns>
     public async Task GenerateAsync(int batchSize, int batchesCount, CancellationToken cancellationToken = default)
     {
         var faker = new Faker<BorrowCrudDto>()
